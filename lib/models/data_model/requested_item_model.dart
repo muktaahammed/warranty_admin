@@ -1,6 +1,4 @@
 class RequestedItemModel {
-  String status;
-  String code;
   int totalRequested;
   int totalUderProcessing;
   int totalToBeReceived;
@@ -12,8 +10,6 @@ class RequestedItemModel {
   int expiredThisMonth;
 
   RequestedItemModel({
-    this.status,
-    this.code,
     this.totalRequested,
     this.totalUderProcessing,
     this.totalToBeReceived,
@@ -26,8 +22,6 @@ class RequestedItemModel {
   });
 
   RequestedItemModel.fromJson(Map<String, dynamic> json) {
-    status = json['status'];
-    code = json['code'];
     totalRequested = json['total_requested'];
     totalUderProcessing = json['total_under_processing'];
     totalToBeReceived = json['product_tobe_recieved'];
@@ -36,6 +30,6 @@ class RequestedItemModel {
     onWarrantyProcess = json['on_warrenty_process'];
     expiredItems = json['total_expired_items'];
     totalUnderWarranty = json['total_under_warrenty'];
-    expiredThisMonth = json['expireThisMonth'];
+    expiredThisMonth = json['expire_this_month'];
   }
 }

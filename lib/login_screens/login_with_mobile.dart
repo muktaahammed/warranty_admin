@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:warranty_admin/login_screens/confirm_opt.dart';
 
 class LoginWithMobile extends StatefulWidget {
   LoginWithMobile({Key key}) : super(key: key);
@@ -30,65 +31,36 @@ class _LoginWithMobileState extends State<LoginWithMobile> {
           padding: EdgeInsets.only(left: 10, right: 10),
           color: Colors.grey[200],
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Row(
-                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  /* Flexible(
-                    child: CountryCodePicker(
-                      onChanged: print,
-                      // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
-                      initialSelection: 'IT',
-                      favorite: ['+39', 'FR'],
-                      countryFilter: ['IT', 'FR'],
-                      showFlagDialog: false,
-                      comparator: (a, b) => b.name.compareTo(a.name),
-                      //Get the country information relevant to the initial selection
-                      onInit: (code) => print(
-                          "on init ${code.name} ${code.dialCode} ${code.name}"),
-                    ),
-                  ), */
-                  Flexible(
-                    child: TextField(
-                      decoration: InputDecoration(labelText: 'Mobile'),
-                    ),
-                  )
-                ],
-              ),
-              /* SizedBox(
-                width: 400,
-                height: 60,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: CountryCodePicker(
-                    onChanged: print,
-                    hideMainText: true,
-                    showFlagMain: true,
-                    showFlag: false,
-                    initialSelection: 'TF',
-                    hideSearch: true,
-                    showCountryOnly: true,
-                    showOnlyCountryWhenClosed: true,
-                    alignLeft: true,
-                  ),
+              TextField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Mobile Number',
+                  hintText: '+6018783241',
                 ),
-              ), */
-
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: 50,
-                child: ElevatedButton(
-                  child: Text('Request for OPT'),
-                  onPressed: () {
-                    print('===> request for opt button preesed');
-
-                    /*  Navigator.push(
+              ),
+              SizedBox(height: 10),
+              Container(
+                color: Colors.green,
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: 50,
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.forward_sharp,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      print('requested for opt');
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => SubmitOpt(),
-                        )); */
-                  },
+                          builder: (context) => ConfirmOtp(),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ],

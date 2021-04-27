@@ -1,23 +1,64 @@
-import 'dart:io';
-import 'package:http/http.dart' as http;
-
+import 'package:dio/dio.dart';
 
 class UploadSurvice {
+  static Future<dynamic> uploadFile(filePath) async {
+    //jwt authentication token
 
-static Future asyncFileUpload(String text, File file) async{
-   //create multipart request for POST or PATCH method
-   var request = http.MultipartRequest("POST", Uri.parse('https://warranty.rbfgroupbd.com/staffDP'));
-   //add text fields
-   request.fields["text_field"] = text;
-   //create multipart using filepath, string or bytes
-   var pic = await http.MultipartFile.fromPath("file_field", file.path);
-   //add multipart to request
-   request.files.add(pic);
-   var response = await request.send();
+    var _userId = '605b981d4d998b3124a81204';
 
-   //Get the response from the server
-   var responseData = await response.stream.toBytes();
-   var responseString = String.fromCharCodes(responseData);
-   print(responseString);
+    try {
+      FormData formData = new FormData.fromMap({
+        "image": await MultipartFile.fromFile(filePath, filename: "dp"),
+      });
+
+      Response response = await Dio().post(
+        "https://appointella-api.herokuapp.com/customer/$_userId",
+        data: formData,
+        options: Options(
+          headers: <String, String>{
+            //
+          },
+        ),
+      );
+      return response;
+    } on DioError catch (e) {
+      return e.response;
+    } catch (e) {}
+  }
 }
-}
+
+/*
+class ImageService{
+  static Future<dynamic> uploadFile(filePath) async {
+    //jwt authentication token
+    var authToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhbTEyM0BnbWFpbC5jb20iLCJzdWIiOiI2MDViOTgxZDRkOTk4YjMxMjRhODEyMDQiLCJyb2xlIjoiY3VzdG9tZXIiLCJpYXQiOjE2MTgyMzQ4NjUsImV4cCI6MTYxODMyMTI2NX0.lYUfZ20TlFZZQO_1JKZbKYZublPRoejqnmxKOAM9CN0';
+    //user im use to upload image
+    //Note: this authToken and user id parameter will depend on my backend api structure
+    //in your case it can be only auth token
+    var _userId = '605b981d4d998b3124a81204';
+
+    try {
+      FormData formData =
+      new FormData.fromMap({
+        "image":
+        await MultipartFile.fromFile(filePath, filename: "dp")});
+
+      Response response =
+      await Dio().put(
+          "https://appointella-api.herokuapp.com/customer/$_userId",
+          data: formData,
+          options: Options(
+              headers: <String, String>{
+                'Authorization': 'Bearer $authToken',
+              }
+          )
+      );
+      return response;
+    }on DioError catch (e) {
+      return e.response;
+    } catch(e){
+    }
+  }
+} 
+
+ */

@@ -7,14 +7,15 @@ class EquipmentModel {
   String warrentyLength;
   SubWarrenty subWarrenty;
 
-  EquipmentModel(
-      {this.brandName,
-      this.modelNumber,
-      this.modelName,
-      this.serialNumber,
-      this.productType,
-      this.warrentyLength,
-      this.subWarrenty});
+  EquipmentModel({
+    this.brandName,
+    this.modelNumber,
+    this.modelName,
+    this.serialNumber,
+    this.productType,
+    this.warrentyLength,
+    this.subWarrenty,
+  });
 
   EquipmentModel.fromJson(Map<String, dynamic> json) {
     brandName = json['brand_name'];

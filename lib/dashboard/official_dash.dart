@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:warranty_admin/const/style.dart';
@@ -13,7 +12,6 @@ import 'package:warranty_admin/models/api_model/base_mode.dart';
 import 'package:warranty_admin/profile/edit_profile.dart';
 import 'package:warranty_admin/profile/profile.dart';
 import 'package:warranty_admin/provider/auth_service.dart';
-import 'package:warranty_admin/models/data_model/active_user_model.dart';
 import 'package:warranty_admin/items/active_users/active_users_list.dart';
 import 'package:warranty_admin/items/item_expired/item_expired_list.dart';
 
@@ -98,15 +96,13 @@ class _OriginalDashBoardState extends State<OriginalDashBoard> {
                     child: SingleChildScrollView(
                       child: Container(
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(height: 20),
                             InkWell(
                               child: CircleAvatar(
                                 backgroundImage: NetworkImage(BaseModel
                                         .baseUrl +
-                                    '/getstaffDP/${authService.getRes.staffID}'),
+                                    '/getstaffimage/${authService.getRes.staffID}'),
                                 backgroundColor: Colors.transparent,
                                 radius: 45,
                               ),
@@ -122,7 +118,6 @@ class _OriginalDashBoardState extends State<OriginalDashBoard> {
                             ),
                             SizedBox(height: 8),
                             Text('Welcome ${authService.getRes.name}' ?? null),
-                            SizedBox(height: 5),
                             InkWell(
                               child: Text(
                                 'Edit Profile',
@@ -140,6 +135,8 @@ class _OriginalDashBoardState extends State<OriginalDashBoard> {
                                 );
                               },
                             ),
+                            SizedBox(height: 5),
+
                             SizedBox(height: 10),
                             //
                             Row(
@@ -338,7 +335,7 @@ class _OriginalDashBoardState extends State<OriginalDashBoard> {
                               padding: EdgeInsets.only(left: 10, top: 20),
                               child: Column(
                                 children: [
-                                  Row(
+                                  /* Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
@@ -364,7 +361,7 @@ class _OriginalDashBoardState extends State<OriginalDashBoard> {
                                         style: normalStyle,
                                       ),
                                     ],
-                                  ),
+                                  ), */
                                   SizedBox(height: 10),
                                   Row(
                                     mainAxisAlignment:

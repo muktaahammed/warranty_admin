@@ -15,7 +15,9 @@ class ApiModel {
     // httpHeaders['Back-Token'] = await StaffModel.getLocalToken();
     dio.options.headers = httpHeaders;
     try {
+      print('trying to upload...');
       response = await dio.post(url, data: params);
+      print(response);
       return response.data;
     } catch (e) {
       print(e.toString());
@@ -52,20 +54,24 @@ class ApiModel {
   */
 
   static Future postData(Map<String, dynamic> body, String url) async {
-    Response response;
-    Dio dio = Dio();
-    dio.options.headers = httpHeaders;
+    var response;
+    var dio = Dio();
+    //dio.options.headers = httpHeaders;
 
     print('geeting url==> $url');
     print('getting body response===> $body');
 
     try {
-      FormData formData = new FormData.fromMap(body);
-      response = await dio.post(url,
-          data: formData, options: Options(contentType: "multipart/form-data"));
+      print('trying to upload...');
+      var formData = new FormData.fromMap(body);
+
+      response = await dio.post(url, data: formData);
+      print(response);
       return response.data;
     } catch (e) {
-      print(e);
+      print(e.toString());
+
+      return {"message": url + "|" + e.toString()};
     }
   }
 

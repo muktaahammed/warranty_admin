@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:warranty_admin/components/toast.dart';
 import 'package:warranty_admin/const/style.dart';
-import 'package:warranty_admin/login_screens/login_screen.dart';
 import 'package:warranty_admin/provider/auth_service.dart';
 
 class Registration extends StatefulWidget {
@@ -175,22 +174,15 @@ class _RegisterState extends State<Registration> {
                           _phoneController.text.isEmpty &&
                           _passwordController.text.isEmpty) {
                         //_validation = true;
-                        Toast.toast(
-                          context,
-                          msg: 'all fields are required',
-                          position: ToastPostion.center,
-                          textSize: 16,
-                        );
+                        ToastDisplay.displayMessage(
+                            'all fields are required', context);
+
                         print('fields are required');
                       } else if (_passwordController.text !=
                           _confirmPasswordController.text) {
+                        ToastDisplay.displayMessage(
+                            'Password doesn\'t match', context);
                         print('Pass doesn\'t match');
-                        Toast.toast(
-                          context,
-                          msg: 'Password doesn\'t match',
-                          position: ToastPostion.center,
-                          textSize: 16,
-                        );
                       } else {
                         _registerUserNow(context);
                       }

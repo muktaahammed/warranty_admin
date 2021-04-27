@@ -1,33 +1,39 @@
+import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:warranty_admin/const/style.dart';
 import 'package:warranty_admin/models/data_model/admin_model.dart';
-import 'package:warranty_admin/profile/edit_profile.dart';
 import 'package:warranty_admin/provider/auth_service.dart';
 
 import '../provider/auth_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   final AdminDataModel adminProfileData;
-  ProfileScreen({Key key, @required this.adminProfileData}) : super(key: key);
+  final String staffID;
+  ProfileScreen({Key key, @required this.adminProfileData, this.staffID})
+      : super(key: key);
 
   @override
-  _ProfileScreenState createState() => _ProfileScreenState(adminProfileData);
+  _ProfileScreenState createState() =>
+      _ProfileScreenState(adminProfileData, staffID);
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final AdminDataModel adminProfileData;
-  _ProfileScreenState(this.adminProfileData);
+  final String staffID;
+  _ProfileScreenState(this.adminProfileData, this.staffID);
 
   @override
   void initState() {
     super.initState();
-    getAdminData();
+    getRequestedData();
   }
 
-  getAdminData() async {
+  getRequestedData() async {
     Provider.of<AuthService>(context, listen: false).requestedItemNumber();
   }
+
+  var baseURl = 'https://warranty.rbfgroupbd.com/getstaffimage/';
 
   @override
   Widget build(BuildContext context) {
@@ -55,10 +61,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         children: [
                           SizedBox(height: 20),
                           CircleAvatar(
-                            backgroundImage: NetworkImage(
-                                'https://warranty.rbfgroupbd.com/getstaffDP/${authService.getRes.staffID}'),
-                            backgroundColor: Colors.transparent,
-                            radius: 70,
+                            radius: 80,
+                            child: CircularProfileAvatar(
+                              baseURl + '${authService.getRes.staffID}',
+                              errorWidget: (context, url, error) => Container(
+                                child: Icon(Icons.error),
+                              ),
+                              placeHolder: (context, url) => Container(
+                                width: 45,
+                                height: 45,
+                                child: CircularProgressIndicator(),
+                              ),
+                              radius: 90,
+                              backgroundColor: Colors.transparent,
+                              borderWidth: 2,
+                              borderColor: Colors.blueAccent,
+                              elevation: 1.0,
+                              cacheImage: true,
+                              showInitialTextAbovePicture: false,
+                            ),
                           ),
                           SizedBox(height: 20),
                           Container(

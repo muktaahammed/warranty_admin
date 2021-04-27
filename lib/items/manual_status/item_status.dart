@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:warranty_admin/components/toast.dart';
+
 import 'package:warranty_admin/provider/auth_service.dart';
 
 class UpdateItemStatus extends StatefulWidget {
@@ -117,12 +118,8 @@ class _TrackItemStatusState extends State<UpdateItemStatus> {
                       print('===> order track button pressed');
                       setState(() {
                         if (_orderController.text.isEmpty) {
-                          Toast.toast(
-                            context,
-                            msg: "order id can\'t be empty",
-                            position: ToastPostion.center,
-                            textSize: 16,
-                          );
+                          ToastDisplay.displayMessage(
+                              'order id can\'t be empty', context);
                         } else {
                           _updateStatusNow();
                         }
@@ -147,20 +144,10 @@ class _TrackItemStatusState extends State<UpdateItemStatus> {
 
     if (_postResponse is! String) {
       print('successfully updated');
-      Toast.toast(
-        context,
-        msg: "Status successfully updated",
-        position: ToastPostion.center,
-        textSize: 16,
-      );
+      ToastDisplay.displayMessage('Status successfully updated', context);
     } else {
       print('error');
-      Toast.toast(
-        context,
-        msg: "Something wrong with order Id",
-        position: ToastPostion.center,
-        textSize: 16,
-      );
+      ToastDisplay.displayMessage('Something wrong with order Id', context);
     }
   }
 }

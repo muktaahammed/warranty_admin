@@ -17,3 +17,7 @@ const smallStyle = TextStyle(
   fontSize: 16,
   fontWeight: FontWeight.normal,
 );
+
+const elevatedButtonStyle = ButtonStyle(
+  
+);

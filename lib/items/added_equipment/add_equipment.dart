@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:warranty_admin/components/toast.dart';
+import 'package:warranty_admin/items/sub_warranty/parts_form.dart';
+import 'package:warranty_admin/items/sub_warranty/parts_model.dart';
 import 'package:warranty_admin/provider/auth_service.dart';
 
 class AddEquipment extends StatefulWidget {
@@ -19,22 +21,20 @@ class _AddEquipmentState extends State<AddEquipment> {
   bool showResetIcon = true;
   DateTime value = DateTime.now();
 
+  // ignore: unused_field
   bool _validate = false;
+  // ignore: unused_field
   bool _inProcess = false;
 
+  // ignore: unused_field
   double _currentSliderValue = 20, _currentSliderSubValue = 20;
 
   final _brandNameController = TextEditingController();
-  final _modelNumberController = TextEditingController();
   final _modelNameController = TextEditingController();
+  final _modelNumberController = TextEditingController();
   final _serialNumberController = TextEditingController();
   final _caterogyController = TextEditingController();
   final _warrantyPeriodController = TextEditingController();
-
-  final _parts1NameController = TextEditingController();
-  final _parts1WarrantyController = TextEditingController();
-  final _parts2NameController = TextEditingController();
-  final _parts2WarrantyController = TextEditingController();
 
   @override
   void dispose() {
@@ -42,24 +42,44 @@ class _AddEquipmentState extends State<AddEquipment> {
 
     _brandNameController.dispose();
     _serialNumberController.dispose();
-    _modelNumberController.dispose();
     _modelNameController.dispose();
+    _modelNumberController.dispose();
     _caterogyController.dispose();
-
-    _parts1NameController.dispose();
-    _parts1WarrantyController.dispose();
-    _parts2NameController.dispose();
-    _parts2WarrantyController.dispose();
   }
 
   String _chosenCategory;
   List<DropdownMenuItem<String>> menuitems = [];
 
+  // form widget as a list
+  List<PartsForm> partsForm = [];
+
+  //on form user deleted
+  void onDelete(PartsModel _partsModel) {
+    setState(() {
+      var find = partsForm.firstWhere(
+        (it) => it.partsModel == _partsModel,
+        orElse: () => null,
+      );
+      if (find != null) partsForm.removeAt(partsForm.indexOf(find));
+    });
+  }
+
+  ///on add form
+  void onAddForm() {
+    setState(() {
+      var _partsModel = PartsModel();
+      partsForm.add(PartsForm(
+        partsModel: _partsModel,
+        onDelete: () => onDelete(_partsModel),
+      ));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Item'),
+        title: Text('Add Equipment Item'),
         centerTitle: true,
         leading: IconButton(
             icon: Icon(Icons.arrow_back_ios),
@@ -102,18 +122,6 @@ class _AddEquipmentState extends State<AddEquipment> {
               ),
               SizedBox(height: 10),
               TextField(
-                controller: _modelNumberController,
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Model Number',
-                ),
-                onChanged: (String value) {
-                  print('Model Number ===> $value');
-                },
-              ),
-              SizedBox(height: 10),
-              TextField(
                 controller: _modelNameController,
                 keyboardType: TextInputType.text,
                 decoration: InputDecoration(
@@ -124,6 +132,19 @@ class _AddEquipmentState extends State<AddEquipment> {
                   print('Model Name ===> $value');
                 },
               ),
+              SizedBox(height: 10),
+              TextField(
+                controller: _modelNumberController,
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Model Number',
+                ),
+                onChanged: (String value) {
+                  print('Model Number ===> $value');
+                },
+              ),
+
               SizedBox(height: 10),
               Container(
                 padding: const EdgeInsets.only(left: 10),
@@ -191,85 +212,63 @@ class _AddEquipmentState extends State<AddEquipment> {
                 },
               ),
               SizedBox(height: 10),
+
+              //add parts in json
               ExpansionTile(
-                title: Text('Add First Parts Details'),
+                title: Text('Add a new parts'),
                 children: [
-                  Column(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      TextField(
-                        controller: _parts1NameController,
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Enter parts name',
-                        ),
-                        onChanged: (String value) {
-                          print('parts name ===> $value');
-                        },
-                      ),
-                      SizedBox(height: 10),
-                      TextField(
-                        controller: _parts1WarrantyController,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Parts warranty Period (in days)',
-                        ),
-                        onChanged: (String value) {
-                          print('Parts Warranty Period ===> $value');
-                        },
-                      ),
-                      SizedBox(height: 10),
+                      Text('Press + button to add a new parts'),
+                      IconButton(
+                        icon: Icon(Icons.add),
+                        onPressed: onAddForm,
+                      )
                     ],
-                  )
+                  ),
+                  Container(
+                    height: 280,
+                    width: MediaQuery.of(context).size.width,
+                    child: partsForm.length <= 0
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('No Parts added'),
+                            ],
+                          )
+                        : ListView.builder(
+                            addAutomaticKeepAlives: true,
+                            itemCount: partsForm.length,
+                            itemBuilder: (_, i) => partsForm[i],
+                          ),
+                  ),
                 ],
               ),
-              SizedBox(height: 10),
-              ExpansionTile(
-                title: Text('Add Second Parts Deatils'),
-                children: [
-                  Column(
-                    children: [
-                      TextField(
-                        controller: _parts2NameController,
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Enter second parts name',
-                        ),
-                        onChanged: (String value) {
-                          print('parts name ===> $value');
-                        },
-                      ),
-                      SizedBox(height: 10),
-                      TextField(
-                        controller: _parts2WarrantyController,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Parts warranty Period (in days)',
-                        ),
-                        onChanged: (String value) {
-                          print('Parts Warranty Period ===> $value');
-                        },
-                      ),
-                      SizedBox(height: 10),
-                    ],
-                  )
-                ],
-              ),
+              //add parts in json
+
               SizedBox(height: 10),
               SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: 50,
                 child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                      (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.pressed))
+                          return Colors.green[900];
+                        return Colors.green; // Use the component's default.
+                      },
+                    ),
+                  ),
                   child: Text('Add New Item'),
                   onPressed: () {
                     print('===> add button pressed');
                     if (_brandNameController.text.isEmpty &&
                         _modelNumberController.text.isEmpty &&
                         _warrantyPeriodController.text.isEmpty) {
-                      Toast.toast(context, msg: "Required", textSize: 16);
+                      ToastDisplay.displayMessage(
+                          'All fields are required', context);
                     } else {
                       setState(() {
                         _addEquipment(context);
@@ -287,48 +286,31 @@ class _AddEquipmentState extends State<AddEquipment> {
   }
 
   Future<void> _addEquipment(BuildContext context) async {
-    var _brandName,
-        _modelNumber,
-        _modelName,
-        _serialNumber,
-        _category,
-        _warrantyPeriod,
-        _parts1Name,
-        _parts1Length,
-        _parts2Name,
-        _parts2Length;
+    //nested json post
+    Map<String, dynamic> subMap;
+    List partsList = [];
+    for (int i = 0; i < partsForm.length; i++) {
+      partsForm[i].validate();
+      subMap = Map();
+      subMap['parts_name'] = '${partsForm[i].partsModel.partsName}';
+      subMap['purches_date'] = '${partsForm[i].partsModel.purchesDate}';
+      subMap['warranty_end'] = '${partsForm[i].partsModel.warrantyEnd}';
+      subMap['alarm_date'] = '${partsForm[i].partsModel.alarmDate}';
+      partsList.add(subMap);
+    }
+    print('this is listedd items => $partsList');
+    //only for
+    print('this is type => $subMap');
 
-    _brandName = _brandNameController.text;
-    _modelNumber = _modelNameController.text;
-    _modelName = _modelNameController.text;
-    _serialNumber = _serialNumberController.text;
-    _category = _chosenCategory;
-    _warrantyPeriod = _warrantyPeriodController.text;
-    _parts1Name = _parts1NameController.text;
-    _parts1Length = _parts1WarrantyController.text;
-    _parts2Name = _parts2NameController.text;
-    _parts2Length = _parts2WarrantyController.text;
-
-    var _apiResponse =
-        await Provider.of<AuthService>(context, listen: false).addEquipment(
-      brandName: _brandName,
-      modelNumber: _modelNumber,
-      modelName: _modelName,
-      serialNumber: _serialNumber,
-      productType: _category,
-      warrantyLength: _warrantyPeriod,
-      part1Name: _parts1Name,
-      parts1Length: _parts1Length,
-      part2Name: _parts2Name,
-      parts2length: _parts2Length,
-    );
-    print('response => $_apiResponse');
-
-    Toast.toast(
-      context,
-      msg: _apiResponse,
-      position: ToastPostion.center,
-      textSize: 16,
+    await Provider.of<AuthService>(context, listen: false).addEquipment(
+      brandName: _brandNameController.text,
+      modelName: _modelNameController.text,
+      modelNumber: _modelNameController.text,
+      serialNumber: _serialNumberController.text,
+      productType: _chosenCategory,
+      warrantyLength: _warrantyPeriodController.text,
+      subWarranty: partsList,
+      context: context,
     );
   }
 }

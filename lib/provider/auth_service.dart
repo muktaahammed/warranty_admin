@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:warranty_admin/components/toast.dart';
@@ -8,6 +6,7 @@ import 'package:warranty_admin/login_screens/login_screen.dart';
 import 'package:warranty_admin/models/data_model/admin_model.dart';
 import 'package:warranty_admin/models/api_model/api_model.dart';
 import 'package:warranty_admin/models/api_model/base_mode.dart';
+import 'package:warranty_admin/models/data_model/profile_Image_update.dart';
 import 'package:warranty_admin/models/data_model/requested_item_details.dart';
 import '../models/data_model/admin_model.dart';
 import '../models/data_model/requested_item_model.dart';
@@ -16,7 +15,7 @@ class AuthService with ChangeNotifier {
   var currentUser;
 
   AuthService() {
-    print('new Auth Service');
+    print('new Auth Service started');
   }
 
   Future getUser() {
@@ -49,25 +48,19 @@ class AuthService with ChangeNotifier {
     print('getting login response ===> $postResponse');
 
     if (postResponse['code'] == '002') {
-      Toast.toast(
-        context,
-        msg: 'Welcome Back',
-        position: ToastPostion.center,
-        textSize: 16,
-      );
+      ToastDisplay.displayMessage('Welcome Back', context);
+
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => OriginalDashBoard(adminEmailPhone: emailPhone),
         ),
       );
+      notifyListeners();
     } else {
-      Toast.toast(
-        context,
-        msg: postResponse['status'].toString(),
-        position: ToastPostion.center,
-        textSize: 16,
-      );
+      ToastDisplay.displayMessage(postResponse['status'].toString(), context);
+
+      notifyListeners();
     }
 
     notifyListeners();
@@ -96,11 +89,8 @@ class AuthService with ChangeNotifier {
     print('getting registration response ===> $postResponse');
 
     if (postResponse['code'] == '002') {
-      Toast.toast(
-        context,
-        msg: postResponse['status'].toString(),
-        textSize: 16,
-      );
+      ToastDisplay.displayMessage(postResponse['status'].toString(), context);
+
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -109,24 +99,19 @@ class AuthService with ChangeNotifier {
       );
       notifyListeners();
     } else {
-      Toast.toast(
-        context,
-        msg: postResponse['status'].toString(),
-        textSize: 16,
-      );
+      ToastDisplay.displayMessage(postResponse['status'].toString(), context);
       notifyListeners();
     }
-
     notifyListeners();
   }
 
   /*
-    * get admin information
-    * Tested Done
+  * get admin information
+  * Tested Done
   */
   AdminDataModel getRes;
   Future<void> getAdminDetails(String phoneEmail) async {
-    var url = BaseModel.baseUrl + '/staffProfile/$phoneEmail';
+    var url = BaseModel.baseUrl + '/staffprofiledetails/$phoneEmail';
 
     var getResponse = await ApiModel.getJson(url);
     getRes = AdminDataModel.fromJson(getResponse);
@@ -154,50 +139,60 @@ class AuthService with ChangeNotifier {
     params['phone'] = adminPhone;
     params['staff_id'] = adminID;
 
-    var apiUrl = BaseModel.baseUrl + '/editStaff';
+    var apiUrl = BaseModel.baseUrl + '/editstaff';
     var postResponse = await ApiModel.postJson(params, apiUrl);
 
     getRes = AdminDataModel(
       name: adminName,
       email: adminEmail,
       phone: adminPhone,
-      id: adminID,
+      staffID: adminID,
     );
 
     print('getting update response ===> $postResponse');
 
     if (postResponse['code'] == '002') {
-      Toast.toast(
-        context,
-        msg: postResponse['status'].toString(),
-        textSize: 16,
-      );
+      ToastDisplay.displayMessage(postResponse['status'].toString(), context);
+      notifyListeners();
     } else {
-      Toast.toast(
-        context,
-        msg: postResponse['status'].toString(),
-        textSize: 16,
-      );
+      ToastDisplay.displayMessage(postResponse['status'].toString(), context);
+      notifyListeners();
     }
     notifyListeners();
   }
 
-  ///
-  Future<void> updateAdminImage(String adminID, File adminImage) async {
+  /* 
+  * update admin profile image
+  * Tested Done 
+  need to confirm
+  */
+  ProfileImageUpdate updateImageResponse;
+  Future<void> updateAdminImage({
+    String adminID,
+    String adminImage,
+    BuildContext context,
+  }) async {
     Map<String, dynamic> params = Map<String, dynamic>();
-    Dio dio = new Dio();
+
+    var image = await MultipartFile.fromFile(adminImage, filename: adminImage);
     params['staff_id'] = adminID;
-    params['staffDP'] = adminImage;
+    params['staffimage'] = image;
 
-    var apiUrl = BaseModel.baseUrl + '/staffDP';
- 
+    var apiUrl = BaseModel.baseUrl + '/staffimage';
     var postResponse = await ApiModel.postData(params, apiUrl);
-    print('getting post response===> $postResponse');
+    print('getting post response ===> $postResponse');
 
-    if (postResponse == '002') {
-      print('successfully update');
+    updateImageResponse = ProfileImageUpdate(
+      staffDP: adminID,
+      staffID: image.toString(),
+    );
+
+    if (postResponse['code'] == '002') {
+      ToastDisplay.displayMessage(postResponse['status'].toString(), context);
+      notifyListeners();
     } else {
-      print('Erroe to update');
+      ToastDisplay.displayMessage(postResponse['status'].toString(), context);
+      notifyListeners();
     }
 
     notifyListeners();
@@ -210,7 +205,7 @@ class AuthService with ChangeNotifier {
   */
   RequestedItemModel requestedNumber;
   Future<void> requestedItemNumber() async {
-    var url = BaseModel.baseUrl + '/requestedProducts';
+    var url = BaseModel.baseUrl + '/itemnumbers';
     var getRes = await ApiModel.getJson(url);
 
     print('get requested item list ===> $getRes');
@@ -245,61 +240,68 @@ class AuthService with ChangeNotifier {
     params['order_id'] = orderId;
     params['status'] = status;
 
-    var apiResponse = BaseModel.baseUrl + '/updateStatus';
+    var apiResponse = BaseModel.baseUrl + '/updatestatus';
     var postResponse = await ApiModel.postJson(params, apiResponse);
     print('getting registration response ===> $postResponse');
-
-    /* postResponse = RequestedItemDetails(
-      requestedDetail.id,
-      requestedDetail.email,
-      requestedDetail.phone,
-      requestedDetail.name,
-      requestedDetail.dob,
-      requestedDetail.buyerId,
-      requestedDetail.gender,
-      requestedDetail.joinDate,
-      requestedDetail.photo,
-      requestedDetail.orderId,
-      requestedDetail.stage0,
-      requestedDetail.stage1,
-      requestedDetail.stage2,
-      requestedDetail.stage3,
-      requestedDetail.stage4,
-      requestedDetail.stage5,
-    ); */
 
     notifyListeners();
   }
   /* 
   *
-   */
+  */
 
   Future registerItemBuyer({
     String serial,
     String product,
     String recipt,
+    String buyerPhone,
     String brandName,
-    String serialNumber,
-    String modelNumber,
     String modelName,
+    String modelNumber,
+    String serialNumber,
     String category,
     int warrantyLength,
-    String parts1Name,
+    String buyFrom,
+    String contactNumber,
+    String purchaseDate,
+    String warrantyEnd,
+    List subWarranty,
+    String alarmTime,
+    BuildContext context,
   }) async {
     Map<String, dynamic> formdata = Map<String, dynamic>();
-    formdata[''] = serial;
-    formdata[''] = product;
-    formdata[''] = recipt;
-    formdata[''] = brandName;
-    formdata[''] = serialNumber;
-    formdata[''] = modelNumber;
-    formdata[''] = modelName;
-    formdata[''] = category;
-    formdata[''] = warrantyLength;
-    var apiUrl = BaseModel.baseUrl + '/registerEquipment';
-    var postResponse = await ApiModel.postJson(formdata, apiUrl);
+
+    var serialImage = await MultipartFile.fromFile(serial, filename: serial);
+    var productlImage =
+        await MultipartFile.fromFile(product, filename: product);
+    var reciptImage = await MultipartFile.fromFile(recipt, filename: recipt);
+
+    print(serialImage);
+    print(productlImage);
+    print(reciptImage);
+
+    formdata['serial'] = serialImage;
+    formdata['equipment'] = productlImage;
+    formdata['recipt'] = reciptImage;
+
+    formdata['product_model'] = brandName;
+    formdata['warrenty_length'] = 30;
+    formdata['product_brand'] = modelNumber;
+    formdata['buyer_HP'] = buyerPhone;
+    formdata['product_type'] = category;
+    formdata['product_type'] = category;
+
+    var apiUrl = BaseModel.baseUrl + '/registerequipment';
+    var postResponse = await ApiModel.postData(formdata, apiUrl);
     print(postResponse);
 
+    if (postResponse['code'] == '002') {
+      ToastDisplay.displayMessage(postResponse['status'].toString(), context);
+      notifyListeners();
+    } else {
+      ToastDisplay.displayMessage(postResponse['status'].toString(), context);
+      notifyListeners();
+    }
     notifyListeners();
   }
 
@@ -311,33 +313,37 @@ class AuthService with ChangeNotifier {
   */
   Future addEquipment({
     String brandName,
-    String modelNumber,
     String modelName,
+    String modelNumber,
     String serialNumber,
     String productType,
     String warrantyLength,
-    String part1Name,
-    String parts1Length,
-    String part2Name,
-    String parts2length,
+    List subWarranty,
+    BuildContext context,
   }) async {
     Map<String, dynamic> params = Map<String, dynamic>();
 
     params['brand_name'] = brandName;
-    params['model_number'] = modelNumber;
     params['model_name'] = modelName;
+    params['model_number'] = modelNumber;
+
     params['serial_number'] = serialNumber;
     params['product_type'] = productType;
     params['warrenty_length'] = warrantyLength;
+    params['parts_warrenty'] = subWarranty;
 
-    params['part1_name'] = part1Name;
-    params['part1_length'] = parts1Length;
-    params['part2_name'] = part2Name;
-    params['parts2_length'] = parts2length;
-
-    var apiResponse = BaseModel.baseUrl + '/addEquipment';
+    var apiResponse = BaseModel.baseUrl + '/addequipment';
     var postResponse = await ApiModel.postJson(params, apiResponse);
     print('getting registration response ===> $postResponse');
+
+    if (postResponse['code'] == '002') {
+      ToastDisplay.displayMessage(postResponse['status'].toString(), context);
+      print(postResponse['status'].toString());
+      notifyListeners();
+    } else {
+      ToastDisplay.displayMessage(postResponse['status'].toString(), context);
+      notifyListeners();
+    }
 
     notifyListeners();
   }
@@ -352,36 +358,12 @@ class AuthService with ChangeNotifier {
   */
   //ViewEquipments getEquipmentRes;
   static Future<Map<String, dynamic>> viewAddedEquipments() async {
-    var url = BaseModel.baseUrl + '/viewEquipments';
+    var url = BaseModel.baseUrl + '/viewequipments';
     var getRes = await ApiModel.getJson(url);
 
     print('get added equipment info ===> $getRes');
 
     //notifyListeners();
-    return getRes;
-  }
-
-  /*
-  * View the added equipment by admin on behalf of buyer
-  */
-  static Future<Map<String, dynamic>> viewRegisterEquipments() async {
-    var url = BaseModel.baseUrl + '/registerEquipment';
-    var getRes = await ApiModel.getJson(url);
-
-    print('get added equipment info ===> $getRes');
-
-    return getRes;
-  }
-
-  /*
-  * View all items from order table
-  */
-  static Future<Map<String, dynamic>> viewAllItems() async {
-    var url = BaseModel.baseUrl + '/allItems';
-    var getRes = await ApiModel.getJson(url);
-
-    print('get added equipment info ===> $getRes');
-
     return getRes;
   }
 
@@ -399,7 +381,7 @@ class AuthService with ChangeNotifier {
   * Tested Done
   */
   static Future<Map<String, dynamic>> activeUsers() async {
-    var url = BaseModel.baseUrl + '/activeUser';
+    var url = BaseModel.baseUrl + '/activeuser';
     var getRes = await ApiModel.getJson(url);
 
     print('getting all active users ===> $getRes');
@@ -412,7 +394,7 @@ class AuthService with ChangeNotifier {
   * Tested Done
   */
   static Future<Map<String, dynamic>> itemExpired() async {
-    var url = BaseModel.baseUrl + '/expiredItems';
+    var url = BaseModel.baseUrl + '/expireditems';
     var getRes = await ApiModel.getJson(url);
 
     print('getting all active users ===> $getRes');
@@ -424,13 +406,29 @@ class AuthService with ChangeNotifier {
   * Item under warranty
   */
   static Future<Map<String, dynamic>> itemExpireThisMonth() async {
-    var url = BaseModel.baseUrl + '/expireThisMonth';
+    var url = BaseModel.baseUrl + '/expirethismonth';
     var getRes = await ApiModel.getJson(url);
 
     print('getting all active users ===> $getRes');
 
     return getRes;
   }
+
+  /* 
+  * Item under warranty
+  */
+  static Future<Map<String, dynamic>> totalUnderWarranty() async {
+    var url = BaseModel.baseUrl + '/underwarrenty';
+    var getRes = await ApiModel.getJson(url);
+
+    print('getting all active users ===> $getRes');
+
+    return getRes;
+  }
+
+  //
+  //
+  //
 
   /* 
   * Item under warranty
@@ -444,14 +442,26 @@ class AuthService with ChangeNotifier {
     return getRes;
   }
 
-  /* 
-  * Item under warranty
+  /*
+  * View all items from order table
   */
-  static Future<Map<String, dynamic>> totalUnderWarranty() async {
-    var url = BaseModel.baseUrl + '/warrenty';
+  static Future<Map<String, dynamic>> viewAllItems() async {
+    var url = BaseModel.baseUrl + '/allItems';
     var getRes = await ApiModel.getJson(url);
 
-    print('getting all active users ===> $getRes');
+    print('get added equipment info ===> $getRes');
+
+    return getRes;
+  }
+
+  /*
+  * View the added equipment by admin on behalf of buyer
+  */
+  static Future<Map<String, dynamic>> viewRegisterEquipments() async {
+    var url = BaseModel.baseUrl + '/registerEquipment';
+    var getRes = await ApiModel.getJson(url);
+
+    print('get added equipment info ===> $getRes');
 
     return getRes;
   }

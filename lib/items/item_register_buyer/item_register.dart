@@ -3,6 +3,11 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:warranty_admin/items/scanner/scanner.dart';
+import 'package:warranty_admin/items/sub_warranty/parts_form.dart';
+import 'package:warranty_admin/items/sub_warranty/parts_model.dart';
+import 'package:warranty_admin/provider/auth_service.dart';
 
 class ItemRegister extends StatefulWidget {
   ItemRegister({Key key}) : super(key: key);
@@ -23,64 +28,60 @@ class _AddItemState extends State<ItemRegister> {
   bool _validate = false;
   /* variable for 3 images */
   File _selectedFile, _selectedFile2, _selectedFile3;
-
+  final imagePicker = ImagePicker();
+  // ignore: unused_field
   bool _inProcess = false;
+  double _currentSliderValue = 20;
 
-  double _currentSliderValue = 20, _currentSliderSubValue = 20;
-
+  final _buyerMobileController = TextEditingController();
   final _brandNameController = TextEditingController();
-  final _serialNumberController = TextEditingController();
-  final _modelNumberController = TextEditingController();
   final _modelNameController = TextEditingController();
+  final _modelNumberController = TextEditingController();
+  final _serialNumberController = TextEditingController();
   final _caterogyController = TextEditingController();
   final _warrantyPeriodController = TextEditingController();
   final _buyFromController = TextEditingController();
   final _contactNumberController = TextEditingController();
-
-  final _partNameController = TextEditingController();
-  final _partWarrantyController = TextEditingController();
-  final _partController = TextEditingController();
-  final _partWarrantyEndController = TextEditingController();
+  final _purchesDateController = TextEditingController();
+  final _warrantyEndController = TextEditingController();
 
   @override
   void dispose() {
     super.dispose();
-
+    _buyerMobileController.dispose();
     _brandNameController.dispose();
-    _serialNumberController.dispose();
-    _modelNumberController.dispose();
     _modelNameController.dispose();
+    _modelNumberController.dispose();
+    _serialNumberController.dispose();
     _caterogyController.dispose();
     _warrantyPeriodController.dispose();
     _buyFromController.dispose();
     _contactNumberController.dispose();
-    _partNameController.dispose();
-    _partWarrantyController.dispose();
-    _partController.dispose();
-    _partWarrantyEndController.dispose();
+    _purchesDateController.dispose();
+    _warrantyEndController.dispose();
   }
 
   Future _getImage() async {
     var image;
-    image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    image = await imagePicker.getImage(source: ImageSource.gallery);
     setState(() {
-      _selectedFile = image;
+      _selectedFile = File(image.path);
       print('1st image path ===> $_selectedFile');
     });
   }
 
   Future _getImage2() async {
-    var image2 = await ImagePicker.pickImage(source: ImageSource.gallery);
+    var image2 = await imagePicker.getImage(source: ImageSource.gallery);
     setState(() {
-      _selectedFile2 = image2;
+      _selectedFile2 = File(image2.path);
       print('1st image path ===> $_selectedFile2');
     });
   }
 
   Future _getImage3() async {
-    var image3 = await ImagePicker.pickImage(source: ImageSource.gallery);
+    var image3 = await imagePicker.getImage(source: ImageSource.gallery);
     setState(() {
-      _selectedFile3 = image3;
+      _selectedFile3 = File(image3.path);
       print('1st image path ===> $_selectedFile3');
     });
   }
@@ -142,6 +143,31 @@ class _AddItemState extends State<ItemRegister> {
   String _chosenCategory;
   List<DropdownMenuItem<String>> menuitems = [];
 
+  // form widget as a list
+  List<PartsForm> partsForm = [];
+
+  //on form user deleted
+  void onDelete(PartsModel _partsModel) {
+    setState(() {
+      var find = partsForm.firstWhere(
+        (it) => it.partsModel == _partsModel,
+        orElse: () => null,
+      );
+      if (find != null) partsForm.removeAt(partsForm.indexOf(find));
+    });
+  }
+
+  ///on add form
+  void onAddForm() {
+    setState(() {
+      var _partsModel = PartsModel();
+      partsForm.add(PartsForm(
+        partsModel: _partsModel,
+        onDelete: () => onDelete(_partsModel),
+      ));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -151,19 +177,27 @@ class _AddItemState extends State<ItemRegister> {
           children: [
             Text('Add Item'),
             IconButton(
-                icon: Icon(Icons.qr_code_scanner),
-                onPressed: () {
-                  print('===> scanning for details');
-                })
+              icon: Icon(Icons.qr_code_scanner),
+              onPressed: () {
+                print('===> scanning for details');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Scanner(),
+                  ),
+                );
+              },
+            )
           ],
         ),
         centerTitle: true,
         backgroundColor: Colors.green,
         leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
-            onPressed: () {
-              Navigator.pop(context);
-            }),
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: Container(
         height: MediaQuery.of(context).size.height,
@@ -174,51 +208,55 @@ class _AddItemState extends State<ItemRegister> {
           child: Column(
             children: [
               SizedBox(height: 15),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-                Flexible(
-                  child: Container(
-                    padding: EdgeInsets.only(right: 5),
-                    child: InkWell(
-                      child: getImageWidget(),
-                      onTap: () {
-                        print('===> 1st image picker has beed pressed');
-                        _getImage();
-                        //_showPicupDialog();
-                      },
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Flexible(
+                    child: Container(
+                      padding: EdgeInsets.only(right: 5),
+                      child: InkWell(
+                        child: getImageWidget(),
+                        onTap: () {
+                          print('===> 1st image picker has beed pressed');
+                          _getImage();
+                          //_showPicupDialog();
+                        },
+                      ),
                     ),
                   ),
-                ),
-                Flexible(
-                  child: Container(
-                    padding: EdgeInsets.only(right: 5),
-                    child: InkWell(
-                      child: getImageWidget2(),
-                      onTap: () {
-                        print('===> 2nd image picker has beed pressed');
-                        _getImage2();
-                        //_showPicupDialog();
-                      },
+                  Flexible(
+                    child: Container(
+                      padding: EdgeInsets.only(right: 5),
+                      child: InkWell(
+                        child: getImageWidget2(),
+                        onTap: () {
+                          print('===> 2nd image picker has beed pressed');
+                          _getImage2();
+                          //_showPicupDialog();
+                        },
+                      ),
                     ),
                   ),
-                ),
-                Flexible(
-                  child: Container(
-                    child: InkWell(
-                      child: getImageWidget3(),
-                      onTap: () {
-                        print('===> 3rd image picker has beed pressed');
-                        _getImage3();
-                        //_showPicupDialog();
-                      },
+                  Flexible(
+                    child: Container(
+                      child: InkWell(
+                        child: getImageWidget3(),
+                        onTap: () {
+                          print('===> 3rd image picker has beed pressed');
+                          _getImage3();
+                          //_showPicupDialog();
+                        },
+                      ),
                     ),
                   ),
-                ),
-              ]),
+                ],
+              ),
               SizedBox(height: 10),
               TextField(
+                controller: _buyerMobileController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Enter Brand Name',
+                  labelText: 'Buyer Mobile Number',
                 ),
                 onChanged: (String value) {
                   print('Brand Name ===> $value');
@@ -226,32 +264,46 @@ class _AddItemState extends State<ItemRegister> {
               ),
               SizedBox(height: 10),
               TextField(
+                controller: _brandNameController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Brand Name',
+                ),
+                onChanged: (String value) {
+                  print('Brand Name ===> $value');
+                },
+              ),
+              SizedBox(height: 10),
+              TextField(
+                controller: _modelNameController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Model Name',
+                ),
+                onChanged: (String value) {
+                  print('Brand Name ===> $value');
+                },
+              ),
+              SizedBox(height: 10),
+              TextField(
+                controller: _modelNumberController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Model Number',
+                ),
+                onChanged: (String value) {
+                  print('Brand Name ===> $value');
+                },
+              ),
+              SizedBox(height: 10),
+              TextField(
+                controller: _serialNumberController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Serial Number',
                 ),
                 onChanged: (String value) {
-                  print('Serial Number ===> $value');
-                },
-              ),
-              SizedBox(height: 10),
-              TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Enter Model Number',
-                ),
-                onChanged: (String value) {
-                  print('Model Number ===> $value');
-                },
-              ),
-              SizedBox(height: 10),
-              TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Enter Model Name',
-                ),
-                onChanged: (String value) {
-                  print('Model Name ===> $value');
+                  print('Brand Name ===> $value');
                 },
               ),
               SizedBox(height: 10),
@@ -263,7 +315,7 @@ class _AddItemState extends State<ItemRegister> {
                   borderRadius: BorderRadius.circular(5),
                   border: Border.all(
                     width: 1.0,
-                    color: Colors.black,
+                    color: Colors.black45,
                   ),
                 ),
                 child: Container(
@@ -271,7 +323,7 @@ class _AddItemState extends State<ItemRegister> {
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       isExpanded: true,
-                      //focusColor: Colors.white,
+                      // focusColor: Colors.white,
                       value: _chosenCategory,
                       //elevation: 5,
                       iconSize: 30,
@@ -311,12 +363,13 @@ class _AddItemState extends State<ItemRegister> {
               ),
               SizedBox(height: 10),
               TextField(
+                controller: _warrantyPeriodController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Warranty Period',
+                  labelText: 'Warranty Length',
                 ),
                 onChanged: (String value) {
-                  print('Warranty Period ===> $value');
+                  print('Serial Number ===> $value');
                 },
               ),
               SizedBox(height: 10),
@@ -324,6 +377,7 @@ class _AddItemState extends State<ItemRegister> {
                 children: [
                   Flexible(
                     child: TextField(
+                      controller: _buyFromController,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Buy From',
@@ -336,6 +390,7 @@ class _AddItemState extends State<ItemRegister> {
                   SizedBox(width: 5),
                   Flexible(
                     child: TextField(
+                      controller: _contactNumberController,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Contact Number',
@@ -346,150 +401,6 @@ class _AddItemState extends State<ItemRegister> {
                     ),
                   ),
                 ],
-              ),
-              SizedBox(height: 10),
-              ExpansionTile(
-                title: Text('Add parts warranty'),
-                children: [
-                  Column(
-                    children: [
-                      TextField(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Enter parts name',
-                        ),
-                        onChanged: (String value) {
-                          print('parts name ===> $value');
-                        },
-                      ),
-                      SizedBox(height: 10),
-                      TextField(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Warranty Period',
-                        ),
-                        onChanged: (String value) {
-                          print('Parts Warranty Period ===> $value');
-                        },
-                      ),
-                      SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Flexible(
-                            child: DateTimeField(
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: 'Purchase Date',
-                                labelStyle: TextStyle(),
-                                errorText: _validate ? 'END TIME ?' : null,
-                              ),
-                              style: TextStyle(
-                                  // color: Colors.black,
-                                  ),
-                              // controller: _endTimeController,
-                              format: format,
-                              onShowPicker: (context, currentValue) async {
-                                final date = await showDatePicker(
-                                    context: context,
-                                    firstDate: DateTime(2000),
-                                    initialDate: currentValue ?? DateTime.now(),
-                                    lastDate: DateTime(2100));
-                                if (date != null) {
-                                  final time = await showTimePicker(
-                                    context: context,
-                                    initialTime: TimeOfDay.fromDateTime(
-                                      currentValue ?? DateTime.now(),
-                                    ),
-                                  );
-                                  return DateTimeField.combine(date, time);
-                                } else {
-                                  return currentValue;
-                                }
-                              },
-                              resetIcon:
-                                  showResetIcon ? Icon(Icons.delete) : null,
-                            ),
-                          ),
-                          SizedBox(width: 5),
-                          Flexible(
-                            child: DateTimeField(
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: 'Warranty end',
-                                labelStyle: TextStyle(),
-                                errorText: _validate ? 'END TIME ?' : null,
-                              ),
-                              style: TextStyle(
-                                  // color: Colors.black,
-                                  ),
-                              // controller: _endTimeController,
-                              format: format,
-                              onShowPicker: (context, currentValue) async {
-                                final date = await showDatePicker(
-                                    context: context,
-                                    firstDate: DateTime(2000),
-                                    initialDate: currentValue ?? DateTime.now(),
-                                    lastDate: DateTime(2100));
-                                if (date != null) {
-                                  final time = await showTimePicker(
-                                    context: context,
-                                    initialTime: TimeOfDay.fromDateTime(
-                                      currentValue ?? DateTime.now(),
-                                    ),
-                                  );
-                                  return DateTimeField.combine(date, time);
-                                } else {
-                                  return currentValue;
-                                }
-                              },
-                              resetIcon:
-                                  showResetIcon ? Icon(Icons.delete) : null,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Slider(
-                            value: _currentSliderSubValue,
-                            min: 0,
-                            max: 100,
-                            divisions: 10,
-                            label: _currentSliderSubValue.round().toString(),
-                            onChanged: (double value) {
-                              setState(() {
-                                _currentSliderSubValue = value;
-                                print('Alarm setted is: $value');
-                              });
-                            },
-                          ),
-                          Text('Alarm set : $_currentSliderSubValue days')
-                        ],
-                      ),
-                    ],
-                  )
-                ],
-              ),
-              SizedBox(height: 10),
-              TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Enter Price',
-                ),
-                onChanged: (String value) {
-                  print('Enter Price ===> $value');
-                },
-              ),
-              SizedBox(height: 10),
-              TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Remark',
-                ),
-                onChanged: (String value) {
-                  print('Remark ===> $value');
-                },
               ),
               SizedBox(height: 10),
               Row(
@@ -505,7 +416,7 @@ class _AddItemState extends State<ItemRegister> {
                       style: TextStyle(
                           // color: Colors.black,
                           ),
-                      // controller: _endTimeController,
+                      controller: _purchesDateController,
                       format: format,
                       onShowPicker: (context, currentValue) async {
                         final date = await showDatePicker(
@@ -537,10 +448,7 @@ class _AddItemState extends State<ItemRegister> {
                         labelStyle: TextStyle(),
                         errorText: _validate ? 'END TIME ?' : null,
                       ),
-                      style: TextStyle(
-                          // color: Colors.black,
-                          ),
-                      // controller: _endTimeController,
+                      controller: _warrantyEndController,
                       format: format,
                       onShowPicker: (context, currentValue) async {
                         final date = await showDatePicker(
@@ -566,6 +474,38 @@ class _AddItemState extends State<ItemRegister> {
                 ],
               ),
               SizedBox(height: 10),
+              ExpansionTile(
+                title: Text('Add a new parts'),
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Press + button to add a new parts'),
+                      IconButton(
+                        icon: Icon(Icons.add),
+                        onPressed: onAddForm,
+                      )
+                    ],
+                  ),
+                  Container(
+                    height: 280,
+                    width: MediaQuery.of(context).size.width,
+                    child: partsForm.length <= 0
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('No Parts added'),
+                            ],
+                          )
+                        : ListView.builder(
+                            addAutomaticKeepAlives: true,
+                            itemCount: partsForm.length,
+                            itemBuilder: (_, i) => partsForm[i],
+                          ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -573,7 +513,7 @@ class _AddItemState extends State<ItemRegister> {
                     value: _currentSliderValue,
                     min: 0,
                     max: 100,
-                    divisions: 10,
+                    divisions: 100,
                     label: _currentSliderValue.round().toString(),
                     onChanged: (double value) {
                       setState(() {
@@ -595,14 +535,14 @@ class _AddItemState extends State<ItemRegister> {
                       (Set<MaterialState> states) {
                         if (states.contains(MaterialState.pressed))
                           return Colors.green[900];
-                        return Colors
-                            .green; // Use the component's default.
+                        return Colors.green; // Use the component's default.
                       },
                     ),
                   ),
                   child: Text('Add New Item'),
-                  onPressed: () {
+                  onPressed: () async {
                     print('===> add button pressed');
+                    registerEquipmentNow(context);
                   },
                 ),
               ),
@@ -611,6 +551,52 @@ class _AddItemState extends State<ItemRegister> {
           ),
         ),
       ),
+    );
+  }
+
+  registerEquipmentNow(BuildContext context) async {
+    AuthService _authSate = Provider.of<AuthService>(context, listen: false);
+
+    //nested json post
+    Map<String, dynamic> subMap;
+    List partsList = [];
+    for (int i = 0; i < partsForm.length; i++) {
+      partsForm[i].validate();
+      subMap = Map();
+      subMap['parts_name'] = '${partsForm[i].partsModel.partsName}';
+      subMap['purches_date'] = '${partsForm[i].partsModel.purchesDate}';
+      subMap['warranty_end'] = '${partsForm[i].partsModel.warrantyEnd}';
+      subMap['alarm_date'] = '${partsForm[i].partsModel.alarmDate}';
+      partsList.add(subMap);
+    }
+
+    //this is array
+    print('this is listedd items => $partsList');
+    //only for one item
+    print('this is type => $subMap');
+    //var _warrantyLength = int.parse(_warrantyPeriodController.text);
+
+    await _authSate.registerItemBuyer(
+      serial: _selectedFile.path.toString(),
+      product: _selectedFile2.path.toString(),
+      recipt: _selectedFile3.path.toString(),
+
+      buyerPhone: _buyerMobileController.text,
+      brandName: _brandNameController.text,
+      modelName: _modelNameController.text,
+      modelNumber: _modelNumberController.text,
+      serialNumber: _serialNumberController.text,
+      category: _chosenCategory,
+      warrantyLength: int.parse(_warrantyPeriodController.text),
+
+      buyFrom: _buyFromController.text,
+      contactNumber: _contactNumberController.text,
+      purchaseDate: _purchesDateController.text,
+      warrantyEnd: _warrantyEndController.text,
+      subWarranty: partsList,
+      alarmTime: _currentSliderValue.toString(),
+      context: context,
+     
     );
   }
 
@@ -668,5 +654,7 @@ class _AddItemState extends State<ItemRegister> {
         ),
       ],
     );
-  } */
+  } 
+
+  */
 }

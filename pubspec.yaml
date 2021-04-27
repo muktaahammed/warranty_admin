@@ -16,6 +16,7 @@ dependencies:
   cupertino_icons: ^1.0.0
   datetime_picker_formfield: ^2.0.0
   dio: ^3.0.10
+  fluttertoast: ^8.0.6
   http: ^0.12.2
   image_cropper: ^1.4.0
   image_picker: ^0.6.7+22
@@ -23,6 +24,7 @@ dependencies:
   json_annotation: ^3.1.1
   pretty_dio_logger: ^1.1.1
   provider: ^5.0.0
+  qr_code_scanner: ^0.4.0
   url_launcher: ^6.0.3
 
 dev_dependencies:

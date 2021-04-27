@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:warranty_admin/components/toast.dart';
+
 import 'package:warranty_admin/models/data_model/requested_item_details.dart';
 import 'package:warranty_admin/provider/auth_service.dart';
 
@@ -108,6 +109,15 @@ class _TrackItemStatusState extends State<UpdateStatus> {
               SizedBox(
                 width: MediaQuery.of(context).size.width,
                 child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                        (Set<MaterialState> states) {
+                          if (states.contains(MaterialState.pressed))
+                            return Colors.green[900];
+                          return Colors.green; // Use the component's default.
+                        },
+                      ),
+                    ),
                     child: Text('Update Now'),
                     onPressed: () {
                       print('===> order track button pressed');
@@ -133,20 +143,10 @@ class _TrackItemStatusState extends State<UpdateStatus> {
 
     if (_postResponse is! String) {
       print('successfully updated');
-      Toast.toast(
-        context,
-        msg: "Status successfully updated",
-        position: ToastPostion.center,
-        textSize: 16,
-      );
+      ToastDisplay.displayMessage('Status successfully updated', context);
     } else {
       print('error');
-      Toast.toast(
-        context,
-        msg: "Something wrong with order Id",
-        position: ToastPostion.center,
-        textSize: 16,
-      );
+      ToastDisplay.displayMessage('Something wrong with order Id', context);
     }
   }
 }
