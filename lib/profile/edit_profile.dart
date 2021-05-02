@@ -1,9 +1,9 @@
 import 'dart:io';
-import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:warranty_admin/components/toast.dart';
+import 'package:warranty_admin/dashboard/official_dash.dart';
 import 'package:warranty_admin/models/data_model/admin_model.dart';
 import 'package:warranty_admin/models/data_model/profile_Image_update.dart';
 import 'package:warranty_admin/provider/auth_service.dart';
@@ -40,19 +40,10 @@ class _EditProfileState extends State<EditProfile> {
   @override
   void initState() {
     super.initState();
+
     _adminNameController.text = updateAdminData.name;
     _adminEmailController.text = updateAdminData.email;
     _adminPhoneController.text = updateAdminData.phone;
-
-    getAdminDta();
-  }
-
-  getAdminDta() {
-    /* Provider.of<AuthService>(context, listen: false).updateAdminImage(
-      adminID: updateAdminData.staffID,
-      adminImage: '',
-      context: context,
-    ); */
   }
 
   File _selectedFile;
@@ -89,7 +80,15 @@ class _EditProfileState extends State<EditProfile> {
                 icon: Icon(Icons.arrow_back_ios),
                 onPressed: () {
                   setState(() {
-                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => OriginalDashBoard(
+                          selectedFile: _selectedFile,
+                          adminEmailPhone: updateAdminData.staffID,
+                        ),
+                      ),
+                    );
                   });
                 }),
           ),
@@ -102,40 +101,18 @@ class _EditProfileState extends State<EditProfile> {
               child: Column(
                 children: [
                   SizedBox(height: 5),
-                  CircleAvatar(
-                    radius: 80,
-                    child: _selectedFile != null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(75),
-                            child: Image.file(
-                              _selectedFile,
-                              width: 150,
-                              height: 150,
-                              fit: BoxFit.fitHeight,
-                            ),
-                          )
-                        : CircularProfileAvatar(
-                            //updatedProfile.staffDP,
-                            baseURl + '${updateAdminData.staffID}',
-                            errorWidget: (context, url, error) => Container(
-                              child: Icon(Icons.error),
-                            ),
-                            placeHolder: (context, url) => Container(
-                              width: 45,
-                              height: 45,
-                              child: CircularProgressIndicator(),
-                            ),
-                            radius: 90,
-                            backgroundColor: Colors.transparent,
-                            borderWidth: 2,
-                            borderColor: Colors.blueAccent,
-                            elevation: 1.0,
-                            cacheImage: true,
-                            showInitialTextAbovePicture: false,
-                            onTap: () {
-                              _showOptions(context);
-                            },
-                          ),
+                  GestureDetector(
+                    onTap: () {
+                      _showOptions(context);
+                    },
+                    child: CircleAvatar(
+                      radius: 80,
+                      backgroundImage: _selectedFile == null
+                          ? NetworkImage(
+                              baseURl + '${updateAdminData.staffID}',
+                            )
+                          : FileImage(_selectedFile),
+                    ),
                   ),
                   SizedBox(
                     child: Column(
@@ -252,7 +229,7 @@ class _EditProfileState extends State<EditProfile> {
       _inProcess = true;
     }); */
 
-    var image = await picker.getImage(source: source);
+    PickedFile image = await picker.getImage(source: source);
     setState(() {
       _selectedFile = File(image.path);
       _inProcess = false;
@@ -341,16 +318,12 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Future<void> _updateAdminDataNow(context) async {
-    var updatedName, updatedEmail, updatedPhone;
+    var _authService = Provider.of<AuthService>(context, listen: false);
 
-    updatedName = _adminNameController.text;
-    updatedEmail = _adminEmailController.text;
-    updatedPhone = _adminPhoneController.text;
-
-    await Provider.of<AuthService>(context, listen: false).updateAdminData(
-      adminName: updatedName,
-      adminEmail: updatedEmail,
-      adminPhone: updatedPhone,
+    await _authService.updateAdminData(
+      adminName: _adminNameController.text,
+      adminEmail: _adminEmailController.text,
+      adminPhone: _adminPhoneController.text,
       adminID: updateAdminData.staffID,
       context: context,
     );

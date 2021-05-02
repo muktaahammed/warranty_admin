@@ -18,8 +18,8 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   bool _hidePass = true;
 
-  final _emailPhoneContoller = TextEditingController();
-  final _passwordController = TextEditingController();
+  var _emailPhoneContoller = TextEditingController(text: 'mukta@gmail.com');
+  var _passwordController = TextEditingController(text: '12345');
 
   @override
   void dispose() {
@@ -116,9 +116,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             TextSpan(
                               text: ' Register Now',
                               style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                  color: Color(0XFF4321F5)),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                                color: Color(0XFF4321F5),
+                              ),
                             ),
                           ],
                         ),
@@ -186,19 +187,12 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _adminLogin(BuildContext context) async {
-    var adminEmailPhone, _adminPassword;
-
-    adminEmailPhone = _emailPhoneContoller.text;
-    _adminPassword = _passwordController.text;
-
     AuthService _authSate = Provider.of<AuthService>(context, listen: false);
 
     await _authSate.loginUser(
-      emailPhone: adminEmailPhone,
-      password: _adminPassword,
+      emailPhone: _emailPhoneContoller.text,
+      password: _passwordController.text,
       context: context,
     );
-
-    print('parsing value ===> $adminEmailPhone');
   }
 }

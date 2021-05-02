@@ -11,7 +11,6 @@ class ViewAllItemsList extends StatefulWidget {
 }
 
 class _ViewAllItemsState extends State<ViewAllItemsList> {
-
   List<ViewAllItemsModel> _info = [];
   @override
   Widget build(BuildContext context) {
@@ -32,7 +31,7 @@ class _ViewAllItemsState extends State<ViewAllItemsList> {
         padding: EdgeInsets.only(left: 10, right: 10),
         color: Colors.grey[200],
         child: FutureBuilder<Map<String, dynamic>>(
-          future: AuthService.viewAllItems(),
+          future: AuthService.itemExpired(),
           builder: (BuildContext context,
               AsyncSnapshot<Map<String, dynamic>> snapshot) {
             if (snapshot.hasData) {

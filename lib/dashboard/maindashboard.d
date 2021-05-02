@@ -99,7 +99,7 @@ class _MaindashBoardState extends State<MaindashBoard> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => ProfileScreen(
-                            adminProfileData: authService.getRes,
+                           
                           ),
                         ),
                       );

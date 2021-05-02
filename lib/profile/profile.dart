@@ -1,36 +1,31 @@
-import 'package:circular_profile_avatar/circular_profile_avatar.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:warranty_admin/const/style.dart';
 import 'package:warranty_admin/models/data_model/admin_model.dart';
 import 'package:warranty_admin/provider/auth_service.dart';
-
 import '../provider/auth_service.dart';
 
 class ProfileScreen extends StatefulWidget {
+  final File selectedFile;
   final AdminDataModel adminProfileData;
-  final String staffID;
-  ProfileScreen({Key key, @required this.adminProfileData, this.staffID})
+
+  ProfileScreen({Key key, @required this.adminProfileData, this.selectedFile})
       : super(key: key);
 
   @override
-  _ProfileScreenState createState() =>
-      _ProfileScreenState(adminProfileData, staffID);
+  _ProfileScreenState createState() => _ProfileScreenState(adminProfileData);
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final AdminDataModel adminProfileData;
-  final String staffID;
-  _ProfileScreenState(this.adminProfileData, this.staffID);
+
+  var _networkImage;
+  _ProfileScreenState(this.adminProfileData);
 
   @override
   void initState() {
     super.initState();
-    getRequestedData();
-  }
-
-  getRequestedData() async {
-    Provider.of<AuthService>(context, listen: false).requestedItemNumber();
   }
 
   var baseURl = 'https://warranty.rbfgroupbd.com/getstaffimage/';
@@ -38,6 +33,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthService>(builder: (context, authService, child) {
+      _networkImage = widget.selectedFile == null
+          ? NetworkImage(baseURl + authService.getRes.staffID)
+          : FileImage(widget.selectedFile);
       return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -61,25 +59,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         children: [
                           SizedBox(height: 20),
                           CircleAvatar(
+                            backgroundImage: _networkImage,
+                            backgroundColor: Colors.transparent,
                             radius: 80,
-                            child: CircularProfileAvatar(
-                              baseURl + '${authService.getRes.staffID}',
-                              errorWidget: (context, url, error) => Container(
-                                child: Icon(Icons.error),
-                              ),
-                              placeHolder: (context, url) => Container(
-                                width: 45,
-                                height: 45,
-                                child: CircularProgressIndicator(),
-                              ),
-                              radius: 90,
-                              backgroundColor: Colors.transparent,
-                              borderWidth: 2,
-                              borderColor: Colors.blueAccent,
-                              elevation: 1.0,
-                              cacheImage: true,
-                              showInitialTextAbovePicture: false,
-                            ),
                           ),
                           SizedBox(height: 20),
                           Container(

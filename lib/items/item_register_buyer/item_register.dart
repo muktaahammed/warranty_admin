@@ -8,16 +8,20 @@ import 'package:warranty_admin/items/scanner/scanner.dart';
 import 'package:warranty_admin/items/sub_warranty/parts_form.dart';
 import 'package:warranty_admin/items/sub_warranty/parts_model.dart';
 import 'package:warranty_admin/provider/auth_service.dart';
+import 'package:warranty_admin/models/data_model/item_scan_model.dart';
 
 class ItemRegister extends StatefulWidget {
-  ItemRegister({Key key}) : super(key: key);
+  final ItemScanModel result;
+  ItemRegister({Key key, this.result}) : super(key: key);
 
   @override
-  _AddItemState createState() => _AddItemState();
+  _AddItemState createState() => _AddItemState(result);
 }
 
 class _AddItemState extends State<ItemRegister> {
-  //
+  ItemScanModel result;
+  _AddItemState(this.result);
+
   final format = DateFormat("yyyy-MM-dd HH:mm");
   final initialValue = DateTime.now();
 
@@ -59,6 +63,31 @@ class _AddItemState extends State<ItemRegister> {
     _contactNumberController.dispose();
     _purchesDateController.dispose();
     _warrantyEndController.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _autoFillText();
+  }
+
+  addFieldText(TextEditingController controller, String string) {
+    try {
+      controller.text = string;
+
+      if (controller != null) {}
+    } catch (e) {
+      controller.text = '';
+      // print(e.toString());
+    }
+  }
+
+  Future _autoFillText() async {
+    await addFieldText(_brandNameController, result.brandName);
+    await addFieldText(_modelNameController, result.modelName);
+    await addFieldText(_modelNumberController, result.modelNumber);
+    await addFieldText(_serialNumberController, result.serialNumber);
+    await addFieldText(_warrantyPeriodController, result.warrentyLength);
   }
 
   Future _getImage() async {
@@ -580,15 +609,17 @@ class _AddItemState extends State<ItemRegister> {
       serial: _selectedFile.path.toString(),
       product: _selectedFile2.path.toString(),
       recipt: _selectedFile3.path.toString(),
-
       buyerPhone: _buyerMobileController.text,
+
       brandName: _brandNameController.text,
+
       modelName: _modelNameController.text,
+
       modelNumber: _modelNumberController.text,
+      
       serialNumber: _serialNumberController.text,
       category: _chosenCategory,
       warrantyLength: int.parse(_warrantyPeriodController.text),
-
       buyFrom: _buyFromController.text,
       contactNumber: _contactNumberController.text,
       purchaseDate: _purchesDateController.text,
@@ -596,7 +627,6 @@ class _AddItemState extends State<ItemRegister> {
       subWarranty: partsList,
       alarmTime: _currentSliderValue.toString(),
       context: context,
-     
     );
   }
 

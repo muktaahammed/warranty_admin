@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:warranty_admin/login_screens/login_screen.dart';
 import 'package:warranty_admin/provider/auth_service.dart';
 
@@ -56,3 +57,4 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 }
+

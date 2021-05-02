@@ -1,12 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:warranty_admin/components/toast.dart';
 import 'package:warranty_admin/dashboard/official_dash.dart';
 import 'package:warranty_admin/login_screens/login_screen.dart';
+import 'package:warranty_admin/main.dart';
 import 'package:warranty_admin/models/data_model/admin_model.dart';
 import 'package:warranty_admin/models/api_model/api_model.dart';
 import 'package:warranty_admin/models/api_model/base_mode.dart';
-import 'package:warranty_admin/models/data_model/profile_Image_update.dart';
 import 'package:warranty_admin/models/data_model/requested_item_details.dart';
 import '../models/data_model/admin_model.dart';
 import '../models/data_model/requested_item_model.dart';
@@ -49,6 +50,8 @@ class AuthService with ChangeNotifier {
 
     if (postResponse['code'] == '002') {
       ToastDisplay.displayMessage('Welcome Back', context);
+
+      StorageUtils.setAdminEmailPhone(emailPhone);
 
       Navigator.push(
         context,
@@ -104,6 +107,11 @@ class AuthService with ChangeNotifier {
     }
     notifyListeners();
   }
+
+  /*
+  * get admin image
+  * 
+  */
 
   /*
   * get admin information
@@ -166,7 +174,7 @@ class AuthService with ChangeNotifier {
   * Tested Done 
   need to confirm
   */
-  ProfileImageUpdate updateImageResponse;
+
   Future<void> updateAdminImage({
     String adminID,
     String adminImage,
@@ -174,18 +182,14 @@ class AuthService with ChangeNotifier {
   }) async {
     Map<String, dynamic> params = Map<String, dynamic>();
 
-    var image = await MultipartFile.fromFile(adminImage, filename: adminImage);
+    var image =
+        await MultipartFile.fromFile(adminImage, filename: "adminImage");
     params['staff_id'] = adminID;
     params['staffimage'] = image;
 
     var apiUrl = BaseModel.baseUrl + '/staffimage';
     var postResponse = await ApiModel.postData(params, apiUrl);
     print('getting post response ===> $postResponse');
-
-    updateImageResponse = ProfileImageUpdate(
-      staffDP: adminID,
-      staffID: image.toString(),
-    );
 
     if (postResponse['code'] == '002') {
       ToastDisplay.displayMessage(postResponse['status'].toString(), context);
@@ -255,10 +259,10 @@ class AuthService with ChangeNotifier {
     String product,
     String recipt,
     String buyerPhone,
+    String serialNumber,
     String brandName,
     String modelName,
     String modelNumber,
-    String serialNumber,
     String category,
     int warrantyLength,
     String buyFrom,
@@ -271,25 +275,29 @@ class AuthService with ChangeNotifier {
   }) async {
     Map<String, dynamic> formdata = Map<String, dynamic>();
 
-    var serialImage = await MultipartFile.fromFile(serial, filename: serial);
+    var serialImage = await MultipartFile.fromFile(serial, filename: "serial");
     var productlImage =
-        await MultipartFile.fromFile(product, filename: product);
-    var reciptImage = await MultipartFile.fromFile(recipt, filename: recipt);
-
+        await MultipartFile.fromFile(product, filename: "product");
+    var reciptImage = await MultipartFile.fromFile(recipt, filename: "recipt");
     print(serialImage);
     print(productlImage);
     print(reciptImage);
-
     formdata['serial'] = serialImage;
     formdata['equipment'] = productlImage;
     formdata['recipt'] = reciptImage;
 
-    formdata['product_model'] = brandName;
-    formdata['warrenty_length'] = 30;
-    formdata['product_brand'] = modelNumber;
     formdata['buyer_HP'] = buyerPhone;
+    formdata['serial_number'] = serialNumber;
+    formdata['brand_name'] = brandName;
+    formdata['model_name'] = modelName;
+    formdata['model_number'] = modelNumber;
     formdata['product_type'] = category;
-    formdata['product_type'] = category;
+    formdata['buy_from'] = buyFrom;
+    formdata['contact_number'] = contactNumber;
+    formdata['purchase_date'] = purchaseDate;
+    formdata['warrenty_length'] = warrantyLength;
+    formdata['alarm_time'] = alarmTime;
+    formdata['parts_warrenty'] = subWarranty;
 
     var apiUrl = BaseModel.baseUrl + '/registerequipment';
     var postResponse = await ApiModel.postData(formdata, apiUrl);
@@ -367,15 +375,6 @@ class AuthService with ChangeNotifier {
     return getRes;
   }
 
-  static Future<Map<String, dynamic>> viewRequestedItems() async {
-    var url = BaseModel.baseUrl + '/requestProductList';
-    var getRes = await ApiModel.getJson(url);
-
-    print('get added equipment info ===> $getRes');
-
-    return getRes;
-  }
-
   /* 
   * All active users
   * Tested Done
@@ -426,43 +425,39 @@ class AuthService with ChangeNotifier {
     return getRes;
   }
 
-  //
-  //
-  //
-
   /* 
-  * Item under warranty
+  * Item on warranty process
   */
   static Future<Map<String, dynamic>> onWarrantyProcess() async {
-    var url = BaseModel.baseUrl + '/sentToTechnical';
+    var url = BaseModel.baseUrl + '/onwarrantyprocess';
     var getRes = await ApiModel.getJson(url);
 
-    print('getting all active users ===> $getRes');
+    print('getting Item on warranty process ===> $getRes');
 
     return getRes;
   }
 
-  /*
-  * View all items from order table
-  */
-  static Future<Map<String, dynamic>> viewAllItems() async {
-    var url = BaseModel.baseUrl + '/allItems';
+  static Future<Map<String, dynamic>> viewRequestedItems() async {
+    var url = BaseModel.baseUrl + '/requestedforwarrenty';
     var getRes = await ApiModel.getJson(url);
 
     print('get added equipment info ===> $getRes');
 
     return getRes;
   }
+}
 
-  /*
-  * View the added equipment by admin on behalf of buyer
-  */
-  static Future<Map<String, dynamic>> viewRegisterEquipments() async {
-    var url = BaseModel.baseUrl + '/registerEquipment';
-    var getRes = await ApiModel.getJson(url);
+///
+class StorageUtils {
+  static Future<String> getAdminEmailPhone() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String stringValue = prefs.getString('adminEmailPhone') ?? null;
+    return stringValue;
+  }
 
-    print('get added equipment info ===> $getRes');
-
-    return getRes;
+  static Future<String> setAdminEmailPhone(String adminEmailPhone) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('adminEmailPhone', adminEmailPhone);
+    return '';
   }
 }

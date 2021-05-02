@@ -7,11 +7,11 @@ class ProfileImageUpdate {
     this.staffDP,
   });
 
-  ProfileImageUpdate.fromMap(Map<String, dynamic> json)
+  ProfileImageUpdate.fromJson(Map<String, dynamic> json)
       : staffID = json['staff_id'],
         staffDP = json['staffimage'];
 
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toJson() => {
         'staff_id': staffID,
         'staffimage': staffDP,
       };

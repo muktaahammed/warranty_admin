@@ -35,7 +35,7 @@ class _ItemunderWarrantyListState extends State<OnWarrantyProcessList> {
           builder: (BuildContext context,
               AsyncSnapshot<Map<String, dynamic>> snapshot) {
             if (snapshot.hasData) {
-              var data = snapshot.data['sent_item_list'];
+              var data = snapshot.data['on_warranty_list'];
 
               for (var i = 0; i < data.length; i++) {
                 _info.add(OnWarrantyProcess.fromJson(data[i]));
@@ -67,18 +67,20 @@ class _ItemunderWarrantyListState extends State<OnWarrantyProcessList> {
       itemCount: _info.length,
       itemBuilder: (context, index) {
         return _tile(
-          _info[index].orderId,
-          _info[index].productBrand,
-          _info[index].productModel,
+          _info[index].status,
+          _info[index].code,
+          _info[index].total,
+          //_info[index].onWarrantyList[0],
         );
       },
     );
   }
 
   Card _tile(
-    var orderId,
-    var productBrand,
-    var productModel,
+    var status,
+    var code,
+    var total,
+    // var onWarrantyList,
   ) {
     return Card(
       child: Container(
@@ -91,7 +93,7 @@ class _ItemunderWarrantyListState extends State<OnWarrantyProcessList> {
               title: Container(
                 child: Column(
                   children: [
-                    Text(orderId ?? null),
+                    Text(status.toString() ?? null),
                   ],
                 ),
               ),
