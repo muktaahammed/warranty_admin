@@ -7,6 +7,7 @@ import 'package:warranty_admin/login_screens/login_with_mobile.dart';
 import 'package:warranty_admin/provider/auth_service.dart';
 import 'package:warranty_admin/registration/registration.dart';
 import '../provider/auth_service.dart';
+import 'package:warranty_admin/login_screens/reset_password.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key key}) : super(key: key);
@@ -18,8 +19,8 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   bool _hidePass = true;
 
-  var _emailPhoneContoller = TextEditingController(text: 'mukta@gmail.com');
-  var _passwordController = TextEditingController(text: '12345');
+  var _emailPhoneContoller = TextEditingController(text: 'admin@gmail.com');
+  var _passwordController = TextEditingController(text: '123123');
 
   @override
   void dispose() {
@@ -152,7 +153,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     child: Text(
                       'Log In',
-                      style: normalStyle,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
                     ),
                     onPressed: () async {
                       setState(() {
@@ -171,6 +175,35 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: 15),
                 InkWell(
+                  child: RichText(
+                    text: TextSpan(
+                      text: 'Forgot Password ?',
+                      style: TextStyle(fontSize: 15.0, color: Colors.black),
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: ' Reset Now',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            color: Color(0XFF4321F5),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  onTap: () {
+                    print('===> inkwell text pressed');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ResetPassword(),
+                      ),
+                    );
+                  },
+                ),
+                SizedBox(height: 15),
+
+                InkWell(
                   child: Text('Unable to log in ?', style: smallStyle),
                   onTap: () {
                     print('===> inkwell text pressed');
@@ -188,6 +221,19 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _adminLogin(BuildContext context) async {
     AuthService _authSate = Provider.of<AuthService>(context, listen: false);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Center(
+          child: SizedBox(
+            height: 50,
+            width: 50,
+            child: CircularProgressIndicator(),
+          ),
+        );
+      },
+    );
 
     await _authSate.loginUser(
       emailPhone: _emailPhoneContoller.text,

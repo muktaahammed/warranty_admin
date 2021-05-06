@@ -68,21 +68,23 @@ class _ExpiredThisMonthState extends State<ExpiredThisMonth> {
         itemCount: _info.length,
         itemBuilder: (context, index) {
           return _tile(
+            _info[index].bname,
             _info[index].bemail,
-            _info[index].orderId,
+            _info[index].bphone,
             _info[index].productBrand,
             _info[index].productModel,
-            _info[index].type,
+            _info[index].partsWarrenty,
           );
         });
   }
 
   Card _tile(
-    var buyerName,
-    var orderId,
+    var bName,
+    var bEmail,
+    var bPhone,
     var productBrand,
     var productModel,
-    var type,
+    var partsWarranty,
   ) {
     //RexpireThisMonthList info = RexpireThisMonthList(buyerName);
 
@@ -91,11 +93,72 @@ class _ExpiredThisMonthState extends State<ExpiredThisMonth> {
         padding: EdgeInsets.all(10),
         child: Column(
           children: [
-            Text(buyerName),
-            Text(orderId),
-            Text(productBrand),
-            Text(productModel),
-            Text(type),
+            ListTile(
+              title: Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text('Name : '),
+                        Text(
+                          bName ?? 'null',
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Text('Email : '),
+                        Text(bEmail ?? 'null'),
+                      ],
+                    ),
+                    SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Text('Phone : '),
+                        Text(bPhone ?? 'null'),
+                      ],
+                    ),
+                    SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Text('Brand : '),
+                        Text(productBrand ?? 'null'),
+                      ],
+                    ),
+                    SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Text('Model : '),
+                        Text(productModel ?? 'null'),
+                      ],
+                    ),
+                    SizedBox(height: 5),
+                    /* ExpansionTile(
+                      title: Text("Sub Parts List"),
+                      children: [
+                        Text(partsWarranty),
+                      ],
+                    ), */
+                  ],
+                ),
+              ),
+
+              /* trailing: IconButton(
+                icon: Icon(Icons.arrow_forward_ios),
+                onPressed: () {
+                  print('Trailing preesed');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => UsersDeatils(usersDeatils: info),
+                    ),
+                  );
+                },
+              ), */
+            ),
           ],
         ),
       ),

@@ -1,8 +1,4 @@
 class AddEquipmentMode {
-  //String status;
- // String code;
-  //int total;
-  //int id;
   String brnadName;
   String serialNumber;
   String modelNumber;
@@ -15,10 +11,6 @@ class AddEquipmentMode {
   String parts2Length;
 
   AddEquipmentMode(
-    //this.status,
-   // this.code,
-    //this.total,
-    //this.id,
     this.brnadName,
     this.serialNumber,
     this.modelNumber,
@@ -32,11 +24,7 @@ class AddEquipmentMode {
   );
 
   AddEquipmentMode.fromJson(Map<String, dynamic> json)
-      : //status = json['status'],
-       // code = json['code'],
-        //total = json['total'],
-        //id = json['id'],
-        brnadName = json['brand_name'],
+      : brnadName = json['brand_name'],
         serialNumber = json['serial_number'],
         modelNumber = json['model_number'],
         modelName = json['model_name'],
@@ -48,19 +36,15 @@ class AddEquipmentMode {
         parts2Length = json['parts2_length'];
 
   Map<String, dynamic> toJson() => {
-       // 'status': status,
-       // 'code': code,
-        //'total': total,
-        //'id': id,
-        'brand_name' : brnadName,
-        'serial_number' : serialNumber,
-        'model_number' : modelNumber,
-        'model_name' : modelName,
-        'product_type' : productType,
-        'warrenty_length' : warrantyPeriod,
-        'parts_name' : partsName,
-        'parts_warrenty' : partsWarranty,
-        'part2_name' : parts2Name,
-        'parts2_length' : parts2Length,
+        'brand_name': brnadName,
+        'serial_number': serialNumber,
+        'model_number': modelNumber,
+        'model_name': modelName,
+        'product_type': productType,
+        'warrenty_length': warrantyPeriod,
+        'parts_name': partsName,
+        'parts_warrenty': partsWarranty,
+        'part2_name': parts2Name,
+        'parts2_length': parts2Length,
       };
 }

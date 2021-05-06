@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:warranty_admin/login_screens/login_screen.dart';
+import 'package:warranty_admin/login_screens/second_login.dart';
 import 'package:warranty_admin/provider/auth_service.dart';
 
 void main() {
@@ -34,7 +36,44 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen>
+    with AfterLayoutMixin<SplashScreen> {
+  Future checkFirstSeen() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool _seen = (prefs.getBool('seen') ?? false);
+
+    if (_seen) {
+      Navigator.of(context).pushReplacement(
+          new MaterialPageRoute(builder: (context) => SecondLogin()));
+    } else {
+      prefs.setBool('seen', true);
+      Timer(
+        Duration(seconds: 3),
+        () => Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LoginScreen(),
+          ),
+        ),
+      );
+    }
+  }
+
+  @override
+  void afterFirstLayout(BuildContext context) => checkFirstSeen();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.yellow,
+      child: FlutterLogo(size: MediaQuery.of(context).size.height),
+    );
+  }
+}
+
+// rewsserve
+/* class _SplashScreenState extends State<SplashScreen> {
+
   @override
   void initState() {
     super.initState();
@@ -57,4 +96,4 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 }
-
+ */

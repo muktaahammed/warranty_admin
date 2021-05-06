@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:warranty_admin/models/data_model/view_equipment.dart';
 import 'package:warranty_admin/provider/auth_service.dart';
-import 'package:warranty_admin/items/added_equipment/view_equipment_details.dart';
 
 class ViewAddedEquipment extends StatefulWidget {
   ViewAddedEquipment({Key key}) : super(key: key);
@@ -70,47 +69,24 @@ class _ViewAddedEquipmentState extends State<ViewAddedEquipment> {
         itemCount: _info.length,
         itemBuilder: (context, index) {
           return _tile(
-            //_info[index].id,
             _info[index].brandName,
             _info[index].serialNumber,
             _info[index].modelNumber,
             _info[index].modelName,
             _info[index].productType,
-            _info[index].warrantyPeriod,
-            _info[index].partsName,
             _info[index].partsWarranty,
-            _info[index].parts2Name,
-            _info[index].parts2Length,
           );
         });
   }
 
   Card _tile(
-    //int id,
     String brandName,
     String serialNumber,
     String modelNumber,
     String modelName,
     String productType,
-    int warrantyPeriod,
-    String partsName,
     String partsWarranty,
-    String parts2Name,
-    String parts2Length,
   ) {
-    ViewEquipments info = ViewEquipments(
-      // id,
-      brandName,
-      serialNumber,
-      modelNumber,
-      modelName,
-      productType,
-      warrantyPeriod,
-      partsName,
-      partsWarranty,
-      parts2Name,
-      parts2Length,
-    );
     return Card(
       child: Container(
         child: Column(
@@ -118,33 +94,40 @@ class _ViewAddedEquipmentState extends State<ViewAddedEquipment> {
             ListTile(
               title: Container(
                 padding: EdgeInsets.all(20),
-                child: Text(
-                  // Visitor's name
-                  brandName,
-                  style: TextStyle(
-                    fontFamily: 'Ubuntu',
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.blueAccent,
-                  ),
-                ),
-              ),
-              trailing: IconButton(
-                //View more details button
-                icon: Icon(
-                  Icons.arrow_forward,
-                  color: Colors.blueAccent,
-                ),
-                onPressed: () {
-                  print('Trailing preesed');
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          ViewEquipmentsDetails(equipDetails: info),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text("Brand Name : "),
+                        Text(brandName),
+                      ],
                     ),
-                  );
-                },
+                    Row(
+                      children: [
+                        Text("Serial Number : "),
+                        Text(serialNumber),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("Model Number : "),
+                        Text(modelNumber),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("Brand Name : "),
+                        Text(brandName),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("Category : "),
+                        Text(productType),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             )
           ],

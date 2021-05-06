@@ -70,6 +70,8 @@ class _ItemunderWarrantyListState extends State<OnWarrantyProcessList> {
           _info[index].status,
           _info[index].code,
           _info[index].total,
+          _info[index].onWarrantyList,
+
           //_info[index].onWarrantyList[0],
         );
       },
@@ -80,7 +82,7 @@ class _ItemunderWarrantyListState extends State<OnWarrantyProcessList> {
     var status,
     var code,
     var total,
-    // var onWarrantyList,
+    var onWarrantyList,
   ) {
     return Card(
       child: Container(
@@ -94,6 +96,7 @@ class _ItemunderWarrantyListState extends State<OnWarrantyProcessList> {
                 child: Column(
                   children: [
                     Text(status.toString() ?? null),
+                    Text(onWarrantyList.toString() ?? null),
                   ],
                 ),
               ),

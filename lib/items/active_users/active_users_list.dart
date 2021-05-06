@@ -69,11 +69,10 @@ class _ActiveUsersListState extends State<ActiveUsersList> {
         itemCount: _info.length,
         itemBuilder: (context, index) {
           return _tile(
-            //_info[index].activeUser,
+            _info[index].buyerId,
             _info[index].bname,
             _info[index].bemail,
             _info[index].bphone,
-            _info[index].buyerId,
             _info[index].joinTime,
           );
         });
@@ -81,19 +80,18 @@ class _ActiveUsersListState extends State<ActiveUsersList> {
 
   Card _tile(
     //var activeUsers,
+    var buyerId,
     var bName,
     var bEmail,
     var bPhone,
-    var buyerId,
     var joiningTime,
   ) {
     ActiveUserList info = ActiveUserList(
-      //activeUser: activeUsers,
+      buyerId: buyerId,
       bname: bName,
       bemail: bEmail,
       bphone: bPhone,
       joinTime: joiningTime,
-      buyerId: buyerId,
     );
 
     return Card(
@@ -107,10 +105,32 @@ class _ActiveUsersListState extends State<ActiveUsersList> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(bName),
-                    Text(bEmail),
-                    Text(bPhone),
-                    Text(joiningTime),
+                    Row(
+                      children: [
+                        Text("Buyer Name : "),
+                        Text(bName),
+                      ],
+                    ),
+                    SizedBox(height: 5.0),
+                    Row(
+                      children: [
+                        Text("Buyer Email : "),
+                        Text(bEmail),
+                      ],
+                    ),
+                    SizedBox(height: 5.0),
+                    Row(
+                      children: [
+                        Text("Buyer Phone : "),
+                        Text(bPhone),
+                      ],
+                    ),
+                    /*  Row(
+                      children: [
+                        Text("Joinig Date : "),
+                        Text(joiningTime),
+                      ],
+                    ), */
                   ],
                 ),
               ),

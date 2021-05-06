@@ -30,7 +30,7 @@ class ApiModel {
   static Future<Map<String, dynamic>> getJson(String url) async {
     Response response;
     Dio dio = Dio();
-
+    // dio.options.connectTimeout = 5000;
     dio.options.headers = httpHeaders;
 
     try {
@@ -74,58 +74,4 @@ class ApiModel {
       return {"message": url + "|" + e.toString()};
     }
   }
-
-/*   static postFormData(Map<String, dynamic> body, String url) async {
-    Response response;
-    var dio = Dio();
-    print('geeting url==> $url');
-    print('getting body response===> $body');
-
-     dio.options.headers = httpHeaders;
-    
-    try {
-      var formData = FormData.fromMap(body);
-      var response = await dio.post(url, data: formData);
-      print('response===> $response');
-      return response.data;
-
-      /*   
-      if (response.statusCode == 200) {
-        return response.data;
-      } else {
-        return response;
-      } 
-      */
-    
-  } */
-
-  /*   
-  * api with  param 
-  * then api get will call like this
-  */
-
-/*
-  static Future getJson(Map<String, dynamic> params, String url) async {
-    Response response;
-    Dio dio = Dio();
-    print('===> param $params');
-    print('===> url $url');
-
-    dio.options.headers = httpHeaders;
-
-    try {
-      response = await dio.get(url, queryParameters: params);
-      if (response.statusCode == 200) {
-        print('200 is ==>${response.data.toString()}');
-        return response.data;
-      } else {
-        return {"code": -999, "desc": "connection failed"};
-      }
-    } catch (e) {
-      print(e.toString());
-      return {"code": -999, "message": url + "|" + e.toString()};
-      // return e.toString();
-    }
-  } 
-  */
 }

@@ -17,10 +17,11 @@ class _ItemUnderWarrantyState extends State<ItemUnderWarranty> {
       appBar: AppBar(
         title: Text('Item Under Warranty'),
         leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
-            onPressed: () {
-              Navigator.pop(context);
-            }),
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         centerTitle: true,
         backgroundColor: Colors.green,
       ),
@@ -66,7 +67,10 @@ class _ItemUnderWarrantyState extends State<ItemUnderWarranty> {
         itemCount: _info.length,
         itemBuilder: (context, index) {
           return _tile(
-            //_info[index].activeUser,
+            _info[index].orderId,
+            _info[index].productBrand,
+            _info[index].productModel,
+            _info[index].type,
             _info[index].bname,
             _info[index].bemail,
             _info[index].bphone,
@@ -75,18 +79,14 @@ class _ItemUnderWarrantyState extends State<ItemUnderWarranty> {
   }
 
   Card _tile(
-    //var activeUsers,
+    var orderID,
+    var productBrand,
+    var productModel,
+    var type,
     var bName,
     var bEmail,
     var bPhone,
   ) {
-    UnderWarrentyList info = UnderWarrentyList(
-      //activeUser: activeUsers,
-      bname: bName,
-      bemail: bEmail,
-      bphone: bPhone,
-    );
-
     return Card(
       child: Container(
         padding: EdgeInsets.all(10),
@@ -98,25 +98,51 @@ class _ItemUnderWarrantyState extends State<ItemUnderWarranty> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(bName),
-                    Text(bEmail),
-                    Text(bPhone),
+                    Row(
+                      children: [
+                        Text("Order ID : "),
+                        Text(orderID),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("Product Brand : "),
+                        Text(productBrand),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("Product Model : "),
+                        Text(productModel),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("Product Type : "),
+                        Text(type),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("Buyer Name : "),
+                        Text(bName),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("Buyer Email : "),
+                        Text(bEmail),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("Buyer Phone : "),
+                        Text(bPhone),
+                      ],
+                    ),
                   ],
                 ),
               ),
-
-              /* trailing: IconButton(
-                icon: Icon(Icons.arrow_forward_ios),
-                onPressed: () {
-                  print('Trailing preesed');
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => UsersDeatils(usersDeatils: info),
-                    ),
-                  );
-                },
-              ), */
             ),
           ],
         ),

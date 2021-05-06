@@ -286,6 +286,20 @@ class _AddEquipmentState extends State<AddEquipment> {
   }
 
   Future<void> _addEquipment(BuildContext context) async {
+    var _authService = Provider.of<AuthService>(context, listen: false);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Center(
+          child: SizedBox(
+            height: 45,
+            width: 45,
+            child: CircularProgressIndicator(),
+          ),
+        );
+      },
+    );
     //nested json post
     Map<String, dynamic> subMap;
     List partsList = [];
@@ -302,7 +316,7 @@ class _AddEquipmentState extends State<AddEquipment> {
     //only for
     print('this is type => $subMap');
 
-    await Provider.of<AuthService>(context, listen: false).addEquipment(
+    await _authService.addEquipment(
       brandName: _brandNameController.text,
       modelName: _modelNameController.text,
       modelNumber: _modelNameController.text,

@@ -2,14 +2,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:warranty_admin/const/style.dart';
-import 'package:warranty_admin/items/added_equipment/add_equipment.dart';
 import 'package:warranty_admin/items/expired_this_month/expire_this_month_list.dart';
 import 'package:warranty_admin/items/item_register_buyer/item_register.dart';
 import 'package:warranty_admin/items/item_under_warranty/item_under_warranty.dart';
 import 'package:warranty_admin/items/requested_warranty/requested_warranty_list.dart';
 import 'package:warranty_admin/items/warranty_on_process/warranty_on_process.dart';
+import 'package:warranty_admin/login_screens/second_login.dart';
 import 'package:warranty_admin/profile/edit_profile.dart';
 import 'package:warranty_admin/profile/profile.dart';
+
 import 'package:warranty_admin/provider/auth_service.dart';
 import 'package:warranty_admin/items/active_users/active_users_list.dart';
 import 'package:warranty_admin/items/item_expired/item_expired_list.dart';
@@ -96,6 +97,14 @@ class _OriginalDashBoardState extends State<OriginalDashBoard> {
                     icon: Icon(Icons.logout),
                     onPressed: () {
                       print('You are logged out');
+                      setState(() {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SecondLogin(),
+                          ),
+                        );
+                      });
                     },
                   ),
                 ],
@@ -114,7 +123,7 @@ class _OriginalDashBoardState extends State<OriginalDashBoard> {
                       child: Column(
                         children: [
                           SizedBox(height: 20),
-                          InkWell(
+                          /*  InkWell(
                             child: CircleAvatar(
                               backgroundImage: selectedFile == null
                                   ? NetworkImage(
@@ -137,12 +146,14 @@ class _OriginalDashBoardState extends State<OriginalDashBoard> {
                           ),
                           SizedBox(height: 8),
                           Text('Welcome ${authService.getRes.name}' ?? null),
+                          SizedBox(height: 5),
                           InkWell(
                             child: Text(
                               'Edit Profile',
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.green[900]),
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green[900],
+                              ),
                             ),
                             onTap: () {
                               Navigator.push(
@@ -154,17 +165,71 @@ class _OriginalDashBoardState extends State<OriginalDashBoard> {
                                 ),
                               );
                             },
+                          ), */
+                          Row(
+                            children: [
+                              GestureDetector(
+                                child: Text(
+                                  'Welcome ${authService.getRes.name}' ?? null,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ProfileScreen(
+                                        adminProfileData: authService.getRes,
+                                        selectedFile: widget.selectedFile,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
                           ),
-                          SizedBox(height: 5),
 
+                          SizedBox(height: 25),
+                          Row(
+                            children: [
+                              InkWell(
+                                child: Text(
+                                  'Edit Profile',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green[900],
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => EditProfile(
+                                        updateAdminData: authService.getRes,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
                           SizedBox(height: 10),
-                          //
+
+                          //Expired Item
                           Row(
                             children: [
                               Text(
                                 authService.requestedNumber.expiredItems
                                     .toString(),
-                                style: normalStyle,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 19,
+                                  decoration: TextDecoration.underline,
+                                ),
                               ),
                               InkWell(
                                 child: Text(
@@ -182,13 +247,20 @@ class _OriginalDashBoardState extends State<OriginalDashBoard> {
                               ),
                             ],
                           ),
+
+                          //Expired This Month
                           SizedBox(height: 10),
                           Row(
                             children: [
                               Text(
                                 authService.requestedNumber.expiredThisMonth
                                     .toString(),
-                                style: normalStyle,
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 19,
+                                  decoration: TextDecoration.underline,
+                                ),
                               ), //_ExpiredThisMonthState
                               InkWell(
                                 child: Text(
@@ -206,13 +278,20 @@ class _OriginalDashBoardState extends State<OriginalDashBoard> {
                               ),
                             ],
                           ),
+
+                          //Items On Process
                           SizedBox(height: 10),
                           Row(
                             children: [
                               Text(
                                 authService.requestedNumber.onWarrantyProcess
                                     .toString(),
-                                style: normalStyle,
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 19,
+                                  decoration: TextDecoration.underline,
+                                ),
                               ), //
                               InkWell(
                                 child: Text(
@@ -229,23 +308,26 @@ class _OriginalDashBoardState extends State<OriginalDashBoard> {
                                   );
                                 },
                               ),
-                              Text(
-                                ' ',
-                                style: normalStyle,
-                              ),
                             ],
                           ),
+
+                          //Iteams Under Warranty
                           SizedBox(height: 10),
                           Row(
                             children: [
                               Text(
                                 authService.requestedNumber.totalUnderWarranty
                                     .toString(),
-                                style: normalStyle,
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 19,
+                                  decoration: TextDecoration.underline,
+                                ),
                               ),
                               InkWell(
                                 child: Text(
-                                  ' Total Items under warranty',
+                                  ' Items under warranty',
                                   style: normalStyle,
                                 ),
                                 onTap: () {
@@ -259,13 +341,20 @@ class _OriginalDashBoardState extends State<OriginalDashBoard> {
                               ),
                             ],
                           ),
+
+                          //Active Users
                           SizedBox(height: 10),
                           Row(
                             children: [
                               Text(
                                 authService.requestedNumber.activeUsers
                                     .toString(),
-                                style: normalStyle,
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 19,
+                                  decoration: TextDecoration.underline,
+                                ),
                               ),
                               InkWell(
                                 child: Text(
@@ -284,34 +373,77 @@ class _OriginalDashBoardState extends State<OriginalDashBoard> {
                             ],
                           ),
                           SizedBox(height: 5),
+
+                          // Searchbox and Button
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              ElevatedButton(
-                                style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.resolveWith<Color>(
-                                    (Set<MaterialState> states) {
-                                      if (states
-                                          .contains(MaterialState.pressed))
-                                        return Colors.green[900];
-                                      return Colors
-                                          .green; // Use the component's default.
-                                    },
-                                  ),
-                                ),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ItemRegister(),
+                              Column(
+                                children: [
+                                  SizedBox(
+                                    width: 250,
+                                    height: 60,
+                                    child: TextField(
+                                      decoration: InputDecoration(
+                                        border: OutlineInputBorder(),
+                                        hintText: "Search by serial number",
+                                        suffix: IconButton(
+                                          color: Colors.black,
+                                          icon: Icon(Icons.search),
+                                          onPressed: () {
+                                            print("Searching..");
+                                            /* Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    SearchBox(),
+                                              ),
+                                            ); */
+
+                                            //
+                                          },
+                                        ),
+                                      ),
+                                      onChanged: (String value) {
+                                        print("buy from ===> $value");
+                                      },
                                     ),
-                                  );
-                                },
-                                child: Text('Add Outgoing Item'),
-                              ),
+                                  ),
+                                  SizedBox(height: 5),
+                                  SizedBox(
+                                    width: 250,
+                                    height: 50,
+                                    child: ElevatedButton(
+                                      style: ButtonStyle(
+                                        backgroundColor: MaterialStateProperty
+                                            .resolveWith<Color>(
+                                          (Set<MaterialState> states) {
+                                            if (states.contains(
+                                                MaterialState.pressed))
+                                              return Colors.green[900];
+                                            return Colors
+                                                .green; // Use the component's default.
+                                          },
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                ItemRegister(),
+                                          ),
+                                        );
+                                      },
+                                      child: Text('Add Outgoing Item'),
+                                    ),
+                                  ),
+                                ],
+                              )
                             ],
                           ),
-                          SizedBox(height: 5),
+
+                          /*  SizedBox(height: 5),
                           Row(
                             children: [
                               ElevatedButton(
@@ -339,7 +471,7 @@ class _OriginalDashBoardState extends State<OriginalDashBoard> {
                               ),
                             ],
                           ),
-                          SizedBox(height: 10),
+                          SizedBox(height: 10), */
                           Row(
                             children: [
                               Text('My Dashboard'),
@@ -422,6 +554,19 @@ class _OriginalDashBoardState extends State<OriginalDashBoard> {
                                           .toString(),
                                       style: normalStyle,
                                     ),
+                                    /* Container(
+                                       height: 50,
+                                      width: 50,
+                                      color: Colors.grey, 
+                                      child: Badge(
+                                        child: Text(
+                                          authService
+                                              .requestedNumber.totalRequested
+                                              .toString(),
+                                          style: normalStyle,
+                                        ),
+                                      ),
+                                    ), */
                                   ],
                                 ),
                               ],

@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:warranty_admin/components/toast.dart';
 import 'package:warranty_admin/dashboard/official_dash.dart';
 import 'package:warranty_admin/login_screens/login_screen.dart';
+import 'package:warranty_admin/login_screens/second_login.dart';
 import 'package:warranty_admin/main.dart';
 import 'package:warranty_admin/models/data_model/admin_model.dart';
 import 'package:warranty_admin/models/api_model/api_model.dart';
@@ -23,10 +26,10 @@ class AuthService with ChangeNotifier {
     return Future.value(currentUser);
   }
 
-  Future logout() {
-    this.currentUser = null;
+  Future logout(BuildContext context) async {
+
+
     notifyListeners();
-    return Future.value(currentUser);
   }
 
   /*
@@ -48,10 +51,16 @@ class AuthService with ChangeNotifier {
 
     print('getting login response ===> $postResponse');
 
-    if (postResponse['code'] == '002') {
+    if (postResponse['code'].toString() == '002') {
       ToastDisplay.displayMessage('Welcome Back', context);
 
       StorageUtils.setAdminEmailPhone(emailPhone);
+
+      // keep user loggedin
+      /* 
+      SharedPreferences sp = await SharedPreferences.getInstance();
+      sp.setString('email', emailPhone); 
+      */
 
       Navigator.push(
         context,
@@ -83,8 +92,8 @@ class AuthService with ChangeNotifier {
     Map<String, dynamic> params = Map<String, dynamic>();
 
     params['name'] = name;
-    params['phone'] = email;
-    params['email'] = phone;
+    params['email'] = email;
+    params['phone'] = phone;
     params['password'] = password;
 
     var apiResponse = BaseModel.baseUrl + '/addstaff';
@@ -92,8 +101,45 @@ class AuthService with ChangeNotifier {
     print('getting registration response ===> $postResponse');
 
     if (postResponse['code'] == '002') {
+      // ToastDisplay.displayMessage(postResponse['status'].toString(), context);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LoginScreen(),
+        ),
+      );
+      notifyListeners();
+    } else {
       ToastDisplay.displayMessage(postResponse['status'].toString(), context);
+      notifyListeners();
+    }
+    notifyListeners();
+  }
 
+  /* 
+  * Register as an Admin with OTP
+  * 
+  */
+  Future registerUserWithOTP({
+    String name,
+    String email,
+    String phone,
+    String password,
+    BuildContext context,
+  }) async {
+    Map<String, dynamic> params = Map<String, dynamic>();
+
+    params['name'] = name;
+    params['email'] = email;
+    params['phone'] = phone;
+    params['password'] = password;
+
+    var apiResponse = BaseModel.baseUrl + '/addstaff';
+    var postResponse = await ApiModel.postJson(params, apiResponse);
+    print('getting registration response ===> $postResponse');
+
+    if (postResponse['code'] == '002') {
+      // ToastDisplay.displayMessage(postResponse['status'].toString(), context);
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -180,15 +226,17 @@ class AuthService with ChangeNotifier {
     String adminImage,
     BuildContext context,
   }) async {
-    Map<String, dynamic> params = Map<String, dynamic>();
+    Map<String, dynamic> formdata = Map<String, dynamic>();
 
     var image =
         await MultipartFile.fromFile(adminImage, filename: "adminImage");
-    params['staff_id'] = adminID;
-    params['staffimage'] = image;
+
+    print("===> $image");
+    formdata['staff_id'] = adminID;
+    formdata['staffimage'] = image;
 
     var apiUrl = BaseModel.baseUrl + '/staffimage';
-    var postResponse = await ApiModel.postData(params, apiUrl);
+    var postResponse = await ApiModel.postData(formdata, apiUrl);
     print('getting post response ===> $postResponse');
 
     if (postResponse['code'] == '002') {
@@ -214,7 +262,6 @@ class AuthService with ChangeNotifier {
 
     print('get requested item list ===> $getRes');
     requestedNumber = RequestedItemModel.fromJson(getRes);
-    print(requestedNumber);
 
     notifyListeners();
   }
@@ -258,16 +305,17 @@ class AuthService with ChangeNotifier {
     String serial,
     String product,
     String recipt,
+    //
     String buyerPhone,
     String serialNumber,
     String brandName,
     String modelName,
     String modelNumber,
     String category,
-    int warrantyLength,
+    String warrantyLength,
     String buyFrom,
     String contactNumber,
-    String purchaseDate,
+    //String purchaseDate,
     String warrantyEnd,
     List subWarranty,
     String alarmTime,
@@ -275,13 +323,16 @@ class AuthService with ChangeNotifier {
   }) async {
     Map<String, dynamic> formdata = Map<String, dynamic>();
 
-    var serialImage = await MultipartFile.fromFile(serial, filename: "serial");
+    var serialImage =
+        await MultipartFile.fromFile(serial, filename: 'fileName');
     var productlImage =
         await MultipartFile.fromFile(product, filename: "product");
     var reciptImage = await MultipartFile.fromFile(recipt, filename: "recipt");
-    print(serialImage);
-    print(productlImage);
-    print(reciptImage);
+
+    print("Image 1 ===> $serial");
+    print("Image 2 ===> $product");
+    print("Image 3 ===> $recipt");
+
     formdata['serial'] = serialImage;
     formdata['equipment'] = productlImage;
     formdata['recipt'] = reciptImage;
@@ -294,14 +345,15 @@ class AuthService with ChangeNotifier {
     formdata['product_type'] = category;
     formdata['buy_from'] = buyFrom;
     formdata['contact_number'] = contactNumber;
-    formdata['purchase_date'] = purchaseDate;
-    formdata['warrenty_length'] = warrantyLength;
+    // formdata['purchase_date'] = purchaseDate;
+    formdata['warranty_end'] = warrantyEnd;
+    formdata['warranty_length'] = warrantyLength;
+    formdata['parts_warranty'] = subWarranty;
     formdata['alarm_time'] = alarmTime;
-    formdata['parts_warrenty'] = subWarranty;
 
     var apiUrl = BaseModel.baseUrl + '/registerequipment';
     var postResponse = await ApiModel.postData(formdata, apiUrl);
-    print(postResponse);
+    print("post res ==? $postResponse");
 
     if (postResponse['code'] == '002') {
       ToastDisplay.displayMessage(postResponse['status'].toString(), context);
@@ -447,7 +499,10 @@ class AuthService with ChangeNotifier {
   }
 }
 
-///
+/*
+* Store staff ID in sharedpreferences
+*/
+
 class StorageUtils {
   static Future<String> getAdminEmailPhone() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

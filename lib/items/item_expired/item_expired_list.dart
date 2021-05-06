@@ -74,6 +74,7 @@ class _ActiveUsersListState extends State<ItemExpiredList> {
             _info[index].bphone,
             _info[index].productBrand,
             _info[index].productModel,
+            _info[index].partsWarrenty,
           );
         });
   }
@@ -84,14 +85,8 @@ class _ActiveUsersListState extends State<ItemExpiredList> {
     var bPhone,
     var productBrand,
     var productModel,
+    var partsWarranty,
   ) {
-    ExpiredProductModel info = ExpiredProductModel(
-      //activeUser: activeUsers,
-      bname: bName,
-      bemail: bEmail,
-      bphone: bPhone,
-    );
-
     return Card(
       child: Container(
         padding: EdgeInsets.all(10),
@@ -103,11 +98,49 @@ class _ActiveUsersListState extends State<ItemExpiredList> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(bName),
-                    Text(bEmail),
-                    Text(bPhone),
-                    Text(productBrand),
-                    Text(productModel),
+                    Row(
+                      children: [
+                        Text('Name : '),
+                        Text(
+                          bName ?? 'null',
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Text('Email : '),
+                        Text(bEmail ?? 'null'),
+                      ],
+                    ),
+                    SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Text('Phone : '),
+                        Text(bPhone ?? 'null'),
+                      ],
+                    ),
+                    SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Text('Brand : '),
+                        Text(productBrand ?? 'null'),
+                      ],
+                    ),
+                    SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Text('Model : '),
+                        Text(productModel ?? 'null'),
+                      ],
+                    ),
+                    SizedBox(height: 5),
+                    /* ExpansionTile(
+                      title: Text("Sub Parts List"),
+                      children: [
+                        Text(partsWarranty),
+                      ],
+                    ), */
                   ],
                 ),
               ),

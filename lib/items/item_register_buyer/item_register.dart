@@ -38,31 +38,35 @@ class _AddItemState extends State<ItemRegister> {
   double _currentSliderValue = 20;
 
   final _buyerMobileController = TextEditingController();
+  final _serialNumberController = TextEditingController();
   final _brandNameController = TextEditingController();
   final _modelNameController = TextEditingController();
   final _modelNumberController = TextEditingController();
-  final _serialNumberController = TextEditingController();
+
   final _caterogyController = TextEditingController();
-  final _warrantyPeriodController = TextEditingController();
   final _buyFromController = TextEditingController();
   final _contactNumberController = TextEditingController();
   final _purchesDateController = TextEditingController();
+
   final _warrantyEndController = TextEditingController();
+  final _warrantyLengthController = TextEditingController();
+  final _alarmTime = TextEditingController();
 
   @override
   void dispose() {
     super.dispose();
     _buyerMobileController.dispose();
+    _serialNumberController.dispose();
     _brandNameController.dispose();
     _modelNameController.dispose();
     _modelNumberController.dispose();
-    _serialNumberController.dispose();
     _caterogyController.dispose();
-    _warrantyPeriodController.dispose();
     _buyFromController.dispose();
     _contactNumberController.dispose();
     _purchesDateController.dispose();
     _warrantyEndController.dispose();
+    _warrantyLengthController.dispose();
+    _alarmTime.dispose();
   }
 
   @override
@@ -74,8 +78,6 @@ class _AddItemState extends State<ItemRegister> {
   addFieldText(TextEditingController controller, String string) {
     try {
       controller.text = string;
-
-      if (controller != null) {}
     } catch (e) {
       controller.text = '';
       // print(e.toString());
@@ -87,7 +89,7 @@ class _AddItemState extends State<ItemRegister> {
     await addFieldText(_modelNameController, result.modelName);
     await addFieldText(_modelNumberController, result.modelNumber);
     await addFieldText(_serialNumberController, result.serialNumber);
-    await addFieldText(_warrantyPeriodController, result.warrentyLength);
+    await addFieldText(_warrantyLengthController, result.warrentyLength);
   }
 
   Future _getImage() async {
@@ -103,7 +105,7 @@ class _AddItemState extends State<ItemRegister> {
     var image2 = await imagePicker.getImage(source: ImageSource.gallery);
     setState(() {
       _selectedFile2 = File(image2.path);
-      print('1st image path ===> $_selectedFile2');
+      print('2nd image path ===> $_selectedFile2');
     });
   }
 
@@ -111,7 +113,7 @@ class _AddItemState extends State<ItemRegister> {
     var image3 = await imagePicker.getImage(source: ImageSource.gallery);
     setState(() {
       _selectedFile3 = File(image3.path);
-      print('1st image path ===> $_selectedFile3');
+      print('3rd image path ===> $_selectedFile3');
     });
   }
 
@@ -283,56 +285,61 @@ class _AddItemState extends State<ItemRegister> {
               SizedBox(height: 10),
               TextField(
                 controller: _buyerMobileController,
+                keyboardType: TextInputType.phone,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Buyer Mobile Number',
                 ),
                 onChanged: (String value) {
-                  print('Brand Name ===> $value');
-                },
-              ),
-              SizedBox(height: 10),
-              TextField(
-                controller: _brandNameController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Brand Name',
-                ),
-                onChanged: (String value) {
-                  print('Brand Name ===> $value');
-                },
-              ),
-              SizedBox(height: 10),
-              TextField(
-                controller: _modelNameController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Model Name',
-                ),
-                onChanged: (String value) {
-                  print('Brand Name ===> $value');
-                },
-              ),
-              SizedBox(height: 10),
-              TextField(
-                controller: _modelNumberController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Model Number',
-                ),
-                onChanged: (String value) {
-                  print('Brand Name ===> $value');
+                  print('buyer mobile ===> $value');
                 },
               ),
               SizedBox(height: 10),
               TextField(
                 controller: _serialNumberController,
+                keyboardType: TextInputType.text,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Serial Number',
                 ),
                 onChanged: (String value) {
-                  print('Brand Name ===> $value');
+                  print('Serial number ===> $value');
+                },
+              ),
+              SizedBox(height: 10),
+              TextField(
+                controller: _brandNameController,
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Brand Name',
+                ),
+                onChanged: (String value) {
+                  print('brand name ===> $value');
+                },
+              ),
+              SizedBox(height: 10),
+              TextField(
+                controller: _modelNameController,
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Model Name',
+                ),
+                onChanged: (String value) {
+                  print('model name ===> $value');
+                },
+              ),
+              SizedBox(height: 10),
+              TextField(
+                controller: _modelNumberController,
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Model Number',
+                ),
+                onChanged: (String value) {
+                  print('model number ===> $value');
                 },
               ),
               SizedBox(height: 10),
@@ -367,10 +374,6 @@ class _AddItemState extends State<ItemRegister> {
                           child: Container(
                             child: Text(
                               value,
-                              style: TextStyle(
-                                  //color: Colors.redAccent,
-                                  // fontSize: ScreenUtil.set(16),
-                                  ),
                             ),
                           ),
                         );
@@ -392,13 +395,14 @@ class _AddItemState extends State<ItemRegister> {
               ),
               SizedBox(height: 10),
               TextField(
-                controller: _warrantyPeriodController,
+                controller: _warrantyLengthController,
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Warranty Length',
+                  labelText: "Warranty Length",
                 ),
                 onChanged: (String value) {
-                  print('Serial Number ===> $value');
+                  print('warranty length ===> $value');
                 },
               ),
               SizedBox(height: 10),
@@ -407,12 +411,13 @@ class _AddItemState extends State<ItemRegister> {
                   Flexible(
                     child: TextField(
                       controller: _buyFromController,
+                      keyboardType: TextInputType.text,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: 'Buy From',
+                        labelText: "Buy From",
                       ),
                       onChanged: (String value) {
-                        print('Buy From ===> $value');
+                        print("buy from ===> $value");
                       },
                     ),
                   ),
@@ -420,12 +425,13 @@ class _AddItemState extends State<ItemRegister> {
                   Flexible(
                     child: TextField(
                       controller: _contactNumberController,
+                      keyboardType: TextInputType.phone,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: 'Contact Number',
+                        labelText: "Contact Number",
                       ),
                       onChanged: (String value) {
-                        print('Contact Number ===> $value');
+                        print("contact number ===> $value");
                       },
                     ),
                   ),
@@ -445,7 +451,7 @@ class _AddItemState extends State<ItemRegister> {
                       style: TextStyle(
                           // color: Colors.black,
                           ),
-                      controller: _purchesDateController,
+                      //controller: _purchesDateController,
                       format: format,
                       onShowPicker: (context, currentValue) async {
                         final date = await showDatePicker(
@@ -509,7 +515,7 @@ class _AddItemState extends State<ItemRegister> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Press + button to add a new parts'),
+                      Text("Press + button to add a new parts"),
                       IconButton(
                         icon: Icon(Icons.add),
                         onPressed: onAddForm,
@@ -523,7 +529,7 @@ class _AddItemState extends State<ItemRegister> {
                         ? Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('No Parts added'),
+                              Text("No Parts added"),
                             ],
                           )
                         : ListView.builder(
@@ -547,11 +553,11 @@ class _AddItemState extends State<ItemRegister> {
                     onChanged: (double value) {
                       setState(() {
                         _currentSliderValue = value;
-                        print('Parts alarm setted is: $value');
+                        print("Parts alarm setted is: $value");
                       });
                     },
                   ),
-                  Text('Alarm set : $_currentSliderValue days')
+                  Text("Alarm set : $_currentSliderValue days")
                 ],
               ),
               SizedBox(height: 10),
@@ -570,7 +576,7 @@ class _AddItemState extends State<ItemRegister> {
                   ),
                   child: Text('Add New Item'),
                   onPressed: () async {
-                    print('===> add button pressed');
+                    print("===> add button pressed");
                     registerEquipmentNow(context);
                   },
                 ),
@@ -585,6 +591,24 @@ class _AddItemState extends State<ItemRegister> {
 
   registerEquipmentNow(BuildContext context) async {
     AuthService _authSate = Provider.of<AuthService>(context, listen: false);
+
+    Future.delayed(const Duration(seconds: 15), () {
+      setState(() {
+        Navigator.pop(context);
+      });
+    });
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Center(
+          child: SizedBox(
+            height: 50,
+            width: 50,
+            child: CircularProgressIndicator(),
+          ),
+        );
+      },
+    );
 
     //nested json post
     Map<String, dynamic> subMap;
@@ -604,27 +628,34 @@ class _AddItemState extends State<ItemRegister> {
     //only for one item
     print('this is type => $subMap');
     //var _warrantyLength = int.parse(_warrantyPeriodController.text);
+    //
+    var gettingImage = _selectedFile.path;
+    var convertedImage1 = gettingImage.toString();
+
+    var gettingImage2 = _selectedFile2.path;
+    var convertedImage2 = gettingImage2.toString();
+
+    var gettingImage3 = _selectedFile3.path;
+    var convertedImage3 = gettingImage3.toString();
 
     await _authSate.registerItemBuyer(
-      serial: _selectedFile.path.toString(),
-      product: _selectedFile2.path.toString(),
-      recipt: _selectedFile3.path.toString(),
+      serial: convertedImage1,
+      product: convertedImage2,
+      recipt: convertedImage3,
+      //
       buyerPhone: _buyerMobileController.text,
-
-      brandName: _brandNameController.text,
-
-      modelName: _modelNameController.text,
-
-      modelNumber: _modelNumberController.text,
-      
       serialNumber: _serialNumberController.text,
+      brandName: _brandNameController.text,
+      modelName: _modelNameController.text,
+      modelNumber: _modelNumberController.text,
+
       category: _chosenCategory,
-      warrantyLength: int.parse(_warrantyPeriodController.text),
       buyFrom: _buyFromController.text,
       contactNumber: _contactNumberController.text,
-      purchaseDate: _purchesDateController.text,
+      //purchaseDate: _purchesDateController.text,
       warrantyEnd: _warrantyEndController.text,
       subWarranty: partsList,
+      warrantyLength: _warrantyLengthController.text.toString(),
       alarmTime: _currentSliderValue.toString(),
       context: context,
     );

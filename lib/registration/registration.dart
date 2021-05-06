@@ -199,20 +199,32 @@ class _RegisterState extends State<Registration> {
   }
 
   Future<void> _registerUserNow(BuildContext context) async {
-    var _name, _email, _phone, _password;
-
-    _name = _nameController.text;
-    _email = _emailController.text;
-    _phone = _phoneController.text;
-    _password = _confirmPasswordController.text;
-
     AuthService _authSate = Provider.of<AuthService>(context, listen: false);
 
+    Future.delayed(const Duration(milliseconds: 500), () {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Center(
+            child: SizedBox(
+              height: 50,
+              width: 50,
+              child: CircularProgressIndicator(),
+            ),
+          );
+        },
+      );
+
+      setState(() {
+        Navigator.pop(context);
+      });
+    });
+
     await _authSate.registerUser(
-      name: _name,
-      email: _email,
-      phone: _phone,
-      password: _password,
+      name: _nameController.text,
+      email: _emailController.text,
+      phone: _phoneController.text,
+      password: _confirmPasswordController.text,
       context: context,
     );
   }
