@@ -19,8 +19,7 @@ class OriginalDashBoard extends StatefulWidget {
   final File selectedFile;
   final String adminEmailPhone;
 
-  OriginalDashBoard(
-      {Key key, this.selectedFile, @required this.adminEmailPhone})
+  OriginalDashBoard({Key key, this.selectedFile, this.adminEmailPhone})
       : super(key: key);
 
   @override
@@ -98,12 +97,7 @@ class _OriginalDashBoardState extends State<OriginalDashBoard> {
                     onPressed: () {
                       print('You are logged out');
                       setState(() {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SecondLogin(),
-                          ),
-                        );
+                        _logout();
                       });
                     },
                   ),
@@ -582,6 +576,32 @@ class _OriginalDashBoardState extends State<OriginalDashBoard> {
           ),
         );
       },
+    );
+  }
+
+  _logout() async {
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Are you sure?'),
+        content: Text('Do you want logout now ?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text('No'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pushReplacement(
+                 MaterialPageRoute(
+                  builder: (context) => SecondLogin(),
+                ),
+              );
+            },
+            child: new Text('Yes'),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:warranty_admin/dashboard/official_dash.dart';
 import 'package:warranty_admin/login_screens/login_screen.dart';
 import 'package:warranty_admin/login_screens/second_login.dart';
 import 'package:warranty_admin/provider/auth_service.dart';
@@ -43,17 +44,27 @@ class _SplashScreenState extends State<SplashScreen>
     bool _seen = (prefs.getBool('seen') ?? false);
 
     if (_seen) {
-      Navigator.of(context).pushReplacement(
-          new MaterialPageRoute(builder: (context) => SecondLogin()));
-    } else {
-      prefs.setBool('seen', true);
-      Timer(
-        Duration(seconds: 3),
-        () => Navigator.pushReplacement(
+      if (prefs.containsKey("email")) {
+        Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => LoginScreen(),
+            builder: (context) => OriginalDashBoard(),
           ),
+        );
+      } else {
+        Navigator.of(context).pushReplacement(
+          new MaterialPageRoute(
+            builder: (context) => SecondLogin(),
+          ),
+        );
+      }
+    } else {
+      prefs.setBool('seen', true);
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LoginScreen(),
         ),
       );
     }

@@ -1,13 +1,10 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:warranty_admin/components/toast.dart';
 import 'package:warranty_admin/dashboard/official_dash.dart';
 import 'package:warranty_admin/login_screens/login_screen.dart';
-import 'package:warranty_admin/login_screens/second_login.dart';
-import 'package:warranty_admin/main.dart';
+
 import 'package:warranty_admin/models/data_model/admin_model.dart';
 import 'package:warranty_admin/models/api_model/api_model.dart';
 import 'package:warranty_admin/models/api_model/base_mode.dart';
@@ -57,10 +54,9 @@ class AuthService with ChangeNotifier {
       StorageUtils.setAdminEmailPhone(emailPhone);
 
       // keep user loggedin
-      /* 
       SharedPreferences sp = await SharedPreferences.getInstance();
       sp.setString('email', emailPhone); 
-      */
+      
 
       Navigator.push(
         context,

@@ -86,14 +86,6 @@ class _ActiveUsersListState extends State<ActiveUsersList> {
     var bPhone,
     var joiningTime,
   ) {
-    ActiveUserList info = ActiveUserList(
-      buyerId: buyerId,
-      bname: bName,
-      bemail: bEmail,
-      bphone: bPhone,
-      joinTime: joiningTime,
-    );
-
     return Card(
       child: Container(
         padding: EdgeInsets.all(10),
